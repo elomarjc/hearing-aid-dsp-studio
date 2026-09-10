@@ -1,0 +1,11 @@
+{
+  "name": "hearing-aid-dsp-studio",
+  "version": "1.0.0",
+  "description": "Binaural Hearing Instrument Signal Chain: Spatial Beamforming, NLMS Feedback Cancellation & 6-Band WDRC",
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/test_dsp.mjs"
+  },
+  "author": "Jacob El-Omar",
+  "license": "MIT"
+}
