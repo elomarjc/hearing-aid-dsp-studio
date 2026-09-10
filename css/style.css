@@ -381,3 +381,173 @@ input[type=range] {
         gap: 12px;
     }
 }
+
+
+/* ========================================================= */
+/* Guide & Tutorial Modal (Universal Component)              */
+/* ========================================================= */
+.btn-guide {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.25), rgba(56, 189, 248, 0.12));
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    padding: 7px 15px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+.btn-guide:hover {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.4), rgba(56, 189, 248, 0.25));
+    border-color: #38bdf8;
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.35);
+    transform: translateY(-1px);
+}
+.guide-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(4, 7, 15, 0.88);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+}
+.guide-modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.guide-modal-card {
+    background: #0d1527;
+    border: 1px solid #1e2d4d;
+    border-radius: 12px;
+    max-width: 780px;
+    width: 100%;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7), 0 0 35px rgba(14, 165, 233, 0.18);
+    overflow: hidden;
+    animation: guideModalSlide 0.22s ease-out;
+}
+@keyframes guideModalSlide {
+    from { transform: translateY(18px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+.guide-modal-header {
+    background: #111c33;
+    border-bottom: 1px solid #1e2d4d;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.guide-modal-header h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #f8fafc;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+}
+.guide-modal-close {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.6rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+    transition: color 0.15s;
+}
+.guide-modal-close:hover {
+    color: #f8fafc;
+}
+.guide-modal-body {
+    padding: 22px 24px;
+    overflow-y: auto;
+    font-size: 0.88rem;
+    color: #cbd5e1;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.guide-section {
+    background: #080d19;
+    border: 1px solid #17243c;
+    border-radius: 8px;
+    padding: 16px;
+}
+.guide-section h3 {
+    font-size: 0.95rem;
+    color: #38bdf8;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.guide-step-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+}
+.guide-step-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+.guide-step-num {
+    background: #0ea5e9;
+    color: #030712;
+    font-weight: 700;
+    font-size: 0.78rem;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+.guide-step-content {
+    flex: 1;
+}
+.guide-step-content strong {
+    color: #f8fafc;
+}
+.guide-modal-footer {
+    background: #0a1120;
+    border-top: 1px solid #1e2d4d;
+    padding: 14px 24px;
+    display: flex;
+    justify-content: flex-end;
+}
+.btn-guide-start {
+    background: #0ea5e9;
+    color: #030712;
+    font-weight: 700;
+    padding: 9px 22px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.btn-guide-start:hover {
+    background: #38bdf8;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+}

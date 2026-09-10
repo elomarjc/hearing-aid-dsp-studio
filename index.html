@@ -15,11 +15,12 @@
         <div>
             <div class="brand-title">
                 <span>Audiological DSP Studio</span>
-                <span class="brand-badge">Oticon / Demant Architecture</span>
+                <span class="brand-badge">Binaural Audiological DSP</span>
             </div>
             <p class="brand-subtitle">Binaural Hearing Instrument Signal Chain: Spatial Beamforming, NLMS Feedback Cancellation & 6-Band WDRC</p>
         </div>
         <div class="header-controls">
+            <button id="guideBtn" class="btn-guide">📖 How to Use & Problem Solved</button>
             <button id="liveAudioBtn" class="btn-audition">🔇 Live Audio Muted (Audition)</button>
             <a href="https://github.com/elomarjc/hearing-aid-dsp-studio" target="_blank" class="btn-audition">GitHub Source</a>
         </div>
@@ -174,9 +175,95 @@
     <!-- Footer -->
     <footer style="text-align: center; padding: 20px; font-size: 0.8rem; color: #64748b; border-top: 1px solid #1e293b; margin-top: 20px;">
         Designed & Implemented by <strong>Jacob El-Omar</strong> | Aalborg University — Bachelor's Project in Electronic Engineering<br>
-        Targeting Demant / Oticon, WS Audiology & GN Hearing Audio DSP Engineering
+        Inspired by challenges in modern Hearing Instrument Audio DSP Engineering
     </footer>
 
     <script type="module" src="js/app.js"></script>
+
+    <!-- Interactive Guide & Problem Overview Modal -->
+    <div id="guideModal" class="guide-modal-overlay">
+        <div class="guide-modal-card">
+            <div class="guide-modal-header">
+                <h2>🦻 Binaural Audiological DSP Studio</h2>
+                <button id="guideClose" class="guide-modal-close" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="guide-modal-body">
+                <div class="guide-section">
+                    <h3>🎯 The Industrial Problem Solved</h3>
+                    <p>Hearing-impaired patients in noisy social settings struggle to separate target speech from background babble (the cocktail party problem). Furthermore, when high amplification is applied, acoustic feedback (sound leaking from the speaker back into the microphone) creates painful howling whistling. Hearing aids must provide spatial directional filtering, cancel acoustic feedback in milliseconds, and compress wide dynamic ranges into the patient's impaired hearing span.</p>
+                </div>
+
+                <div class="guide-section">
+                    <h3>💡 How This Digital Twin Solves It</h3>
+                    <p>Implements a complete real-time hearing instrument audio DSP chain: dual-microphone delay-and-sum beamforming (cardioid, supercardioid, adaptive MVDR) with head shadow diffraction, a 64-tap Normalized Least Mean Squares (NLMS) acoustic feedback canceler (&gt;20 dB ERLE), and 6-band Wide Dynamic Range Compression (WDRC) fitted to patient audiograms.</p>
+                </div>
+
+                <div class="guide-section">
+                    <h3>🕹️ Interactive Quickstart Tutorial (Try This Now!)</h3>
+                    <ul class="guide-step-list">
+                    <li class="guide-step-item">
+                        <span class="guide-step-num">1</span>
+                        <div class="guide-step-content">
+                            <strong>Spatial Soundfield Positioning:</strong> Drag the Target Speech (Green) and Interfering Babble (Red) dots around the 2D head model; switch beamformer modes to watch the polar pattern steer a null toward the noise.
+                        </div>
+                    </li>
+                    <li class="guide-step-item">
+                        <span class="guide-step-num">2</span>
+                        <div class="guide-step-content">
+                            <strong>Acoustic Feedback & Howling Suppression:</strong> Increase Acoustic Loop Gain to +5 dB and toggle NLMS Feedback Cancellation OFF to hear/see howling feedback instability; toggle it back ON to observe feedback cancellation in &lt;30 ms.
+                        </div>
+                    </li>
+                    <li class="guide-step-item">
+                        <span class="guide-step-num">3</span>
+                        <div class="guide-step-content">
+                            <strong>Audiological Fitting:</strong> Adjust the 6 audiogram sliders (250 Hz to 8 kHz) or select presets like 'Steep High-Frequency' to observe dynamic WDRC gain curves.
+                        </div>
+                    </li>
+                    </ul>
+                </div>
+
+                <div class="guide-section">
+                    <h3>📊 Telemetry & Control Glossary</h3>
+                    <ul style="padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem;">
+                        <li><strong>Directivity Index (DI):</strong> Quantifies spatial noise suppression; higher DI values mean stronger attenuation of sound arriving from non-target directions.</li><li><strong>ERLE (Echo Return Loss Enhancement):</strong> Measures how many decibels of acoustic whistling/howling feedback the NLMS adaptive filter eliminates (typically &gt;20 dB).</li><li><strong>WDRC (Wide Dynamic Range Compression):</strong> Amplifies soft speech sounds while compressing loud sounds to restore audibility within the patient's narrow dynamic hearing range.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="guide-modal-footer">
+                <button id="guideStart" class="btn-guide-start">🚀 Start Interactive Simulator</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Toggle Script -->
+    <script>
+        (function() {
+            const guideBtn = document.getElementById('guideBtn');
+            const guideModal = document.getElementById('guideModal');
+            const guideClose = document.getElementById('guideClose');
+            const guideStart = document.getElementById('guideStart');
+
+            function openModal() { if (guideModal) guideModal.classList.add('active'); }
+            function closeModal() { if (guideModal) guideModal.classList.remove('active'); }
+
+            if (guideBtn) guideBtn.addEventListener('click', openModal);
+            if (guideClose) guideClose.addEventListener('click', closeModal);
+            if (guideStart) guideStart.addEventListener('click', closeModal);
+            if (window.location.search.indexOf('guide') !== -1) openModal();
+
+            if (guideModal) {
+                guideModal.addEventListener('click', function(e) {
+                    if (e.target === guideModal) closeModal();
+                });
+            }
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && guideModal && guideModal.classList.contains('active')) {
+                    closeModal();
+                }
+            });
+        })();
+    </script>
+
 </body>
 </html>
