@@ -116,7 +116,7 @@
                     </div>
                 </div>
                 <div style="background: #090e18; border: 1px solid #1e293b; border-radius: 6px; padding: 12px; font-size: 0.8rem; color: #94a3b8;">
-                    <strong>Acoustic Whistling Mitigation:</strong> When open-loop gain exceeds 0 dB, sound leaking from the receiver into the mic creates howling feedback. The NLMS filter continuously tracks the ear canal impulse response \(H_{\text{fb}}(z)\) and subtracts \(\hat{d}[n]\) in real time.
+                    <strong>Acoustic Whistling Mitigation:</strong> When open-loop gain exceeds 0 dB, sound leaking from the receiver into the mic creates howling feedback. The NLMS filter continuously tracks the ear canal feedback transfer function <i>H</i><sub>fb</sub>(<i>z</i>) and subtracts estimated echo <i>d̂</i>[<i>n</i>] in real time.
                 </div>
             </div>
         </div>
