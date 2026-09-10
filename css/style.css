@@ -385,7 +385,6 @@ input[type=range] {
 /* ========================================================= */
 /* Interactive Guided Yellow Spotlight Tour (Zero Blur)      */
 /* ========================================================= */
-/* Target Element Glowing Yellow Outline */
 .tour-spotlight-active {
     position: relative !important;
     z-index: 9995 !important;
@@ -407,7 +406,6 @@ input[type=range] {
     }
 }
 
-/* Floating Guided Tour Card */
 .tour-card {
     position: fixed;
     z-index: 10000;
@@ -415,7 +413,7 @@ input[type=range] {
     background-color: #090e1a !important;
     border: 2px solid #ffd600;
     border-radius: 12px;
-    padding: 16px 18px;
+    padding: 14px 16px;
     box-shadow: 0 16px 45px rgba(0, 0, 0, 0.95), 0 0 25px rgba(255, 214, 0, 0.3);
     max-width: 440px;
     width: calc(100vw - 32px);
@@ -423,7 +421,7 @@ input[type=range] {
     box-sizing: border-box;
     display: none;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     animation: tourCardPop 0.18s ease-out;
 }
 @keyframes tourCardPop {
@@ -461,7 +459,7 @@ input[type=range] {
     color: #ffffff;
 }
 .tour-action-title {
-    font-size: 0.98rem;
+    font-size: 0.96rem;
     font-weight: 700;
     color: #ffffff;
     margin: 0;
@@ -470,9 +468,9 @@ input[type=range] {
 .tour-happens-box {
     background: #0f172a !important;
     border-left: 3px solid #ffd600;
-    padding: 8px 12px;
+    padding: 7px 10px;
     border-radius: 4px;
-    font-size: 0.81rem;
+    font-size: 0.79rem;
     color: #e2e8f0;
     line-height: 1.45;
 }
@@ -482,9 +480,9 @@ input[type=range] {
 .tour-why-box {
     background: #0b1120 !important;
     border-left: 3px solid #38bdf8;
-    padding: 8px 12px;
+    padding: 7px 10px;
     border-radius: 4px;
-    font-size: 0.80rem;
+    font-size: 0.78rem;
     color: #cbd5e1;
     line-height: 1.45;
 }
@@ -495,8 +493,8 @@ input[type=range] {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 4px;
-    padding-top: 8px;
+    margin-top: 2px;
+    padding-top: 6px;
     border-top: 1px solid #1e293b;
 }
 .tour-dots {
@@ -519,9 +517,9 @@ input[type=range] {
     gap: 8px;
 }
 .btn-tour-nav {
-    padding: 6px 14px;
+    padding: 5px 12px;
     border-radius: 6px;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.15s ease;
@@ -546,7 +544,6 @@ input[type=range] {
     box-shadow: 0 0 12px rgba(255, 214, 0, 0.6);
 }
 
-/* Floating Tour Launcher Pill */
 .btn-tour-launcher {
     position: fixed;
     bottom: 20px;
@@ -571,31 +568,98 @@ input[type=range] {
     box-shadow: 0 8px 26px rgba(255, 214, 0, 0.65);
 }
 
-/* Mobile Rules */
-@media (max-width: 640px) {
+/* Mobile Universal Dual-View Rules */
+@media (max-width: 768px) {
     .tour-card {
-        left: 10px !important;
-        right: 10px !important;
-        max-width: none !important;
+        top: auto !important;
+        bottom: 8px !important;
+        left: 8px !important;
+        right: 8px !important;
         width: auto !important;
-        padding: 12px 14px !important;
-        gap: 7px !important;
+        max-width: none !important;
+        padding: 10px 14px !important;
+        gap: 5px !important;
+        background: #080d1a !important;
+        box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.95), 0 0 20px rgba(255, 214, 0, 0.35) !important;
     }
     .tour-action-title {
-        font-size: 0.90rem !important;
+        font-size: 0.88rem !important;
     }
     .tour-happens-box {
-        font-size: 0.77rem !important;
-        padding: 6px 10px !important;
+        font-size: 0.74rem !important;
+        padding: 5px 8px !important;
     }
     .tour-why-box {
-        font-size: 0.76rem !important;
-        padding: 6px 10px !important;
+        font-size: 0.72rem !important;
+        padding: 5px 8px !important;
     }
     .btn-tour-launcher {
-        bottom: 14px !important;
-        right: 14px !important;
-        padding: 8px 14px !important;
-        font-size: 0.78rem !important;
+        bottom: 12px !important;
+        right: 12px !important;
+        padding: 7px 12px !important;
+        font-size: 0.75rem !important;
     }
+}
+
+.mobile-controls-pane {
+  display: contents;
+}
+@media (max-width: 768px) {
+  html, body {
+    height: 100vh !important;
+    height: 100dvh !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .app-header, .status-bar, footer {
+    display: none !important;
+  }
+  main.dashboard-grid {
+    height: 100vh !important;
+    height: 100dvh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+  }
+  .card.live-sticky-screen {
+    height: 220px !important;
+    min-height: 220px !important;
+    max-height: 220px !important;
+    flex-shrink: 0 !important;
+    background: #090e1a !important;
+    border-radius: 0 !important;
+    border: none !important;
+    border-bottom: 2px solid #ffd600 !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.95) !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+  }
+  .card.live-sticky-screen .card-header {
+    padding: 4px 10px !important;
+    font-size: 0.74rem !important;
+    background: #0f172a !important;
+  }
+  .card.live-sticky-screen .card-body {
+    height: 185px !important;
+    padding: 2px !important;
+  }
+  .card.live-sticky-screen canvas {
+    max-height: 155px !important;
+    width: 100% !important;
+    object-fit: contain !important;
+  }
+  .mobile-controls-pane {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 10px !important;
+    padding-bottom: 160px !important;
+    gap: 12px !important;
+  }
 }

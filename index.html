@@ -1,201 +1,181 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audiological DSP Studio — Binaural Hearing Instrument Simulator</title>
-    <link rel="stylesheet" href="css/style.css?v=5.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Audiological DSP Studio — Binaural Hearing Instrument Simulator</title>
+<link href="css/style.css?v=8.0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet"/>
 </head>
 <body>
-    <!-- App Header -->
-    <header class="app-header">
-        <div>
-            <div class="brand-title">
-                <span>Audiological DSP Studio</span>
-                <span class="brand-badge">Binaural Audiological DSP</span>
-            </div>
-            <p class="brand-subtitle">Binaural Hearing Instrument Signal Chain: Spatial Beamforming, NLMS Feedback Cancellation & 6-Band WDRC</p>
-        </div>
-        <div class="header-controls">
-            <button id="guideBtn" class="btn-guide">🎮 Guided Tour</button>
-            <button id="liveAudioBtn" class="btn-audition">🔇 Live Audio Muted (Audition)</button>
-            <a href="https://github.com/elomarjc/hearing-aid-dsp-studio" target="_blank" class="btn-audition">GitHub Source</a>
-        </div>
-    </header>
+<!-- App Header -->
+<header class="app-header">
+<div>
+<div class="brand-title">
+<span>Audiological DSP Studio</span>
+<span class="brand-badge">Binaural Audiological DSP</span>
+</div>
+<p class="brand-subtitle">Binaural Hearing Instrument Signal Chain: Spatial Beamforming, NLMS Feedback Cancellation &amp; 6-Band WDRC</p>
+</div>
+<div class="header-controls">
+<button class="btn-guide" id="guideBtn">🎮 Guided Tour</button>
+<button class="btn-audition" id="liveAudioBtn">🔇 Live Audio Muted (Audition)</button>
+<a class="btn-audition" href="https://github.com/elomarjc/hearing-aid-dsp-studio" target="_blank">GitHub Source</a>
+</div>
+</header>
+<!-- Telemetry Status Bar -->
+<section class="status-bar">
+<div class="status-item">
+<span class="status-label">Directivity Index (DI):</span>
+<span class="status-val" id="telemDI">4.8 dB</span>
+</div>
+<div class="status-item">
+<span class="status-label">Feedback Suppression (ERLE):</span>
+<span class="status-val" id="telemERLE">22.4 dB</span>
+</div>
+<div class="status-item">
+<span class="status-label">Loop Gain Stability:</span>
+<span class="status-pill success" id="telemLoopStatus">STABLE (SUPPRESSED)</span>
+</div>
+<div class="status-item">
+<span class="status-label">Acoustic Angles:</span>
+<span class="status-val" id="telemAngles">Target: 0° | Noise: 110°</span>
+</div>
+</section>
+<!-- Main Dashboard Grid -->
+<main class="dashboard-grid">
+<!-- 1. Spatial Soundfield Card -->
+<div class="card live-sticky-screen">
+<div class="card-header">
+<span class="card-title">📍 2D Spatial Soundfield &amp; Head Shadow</span>
+<span style="font-size: 0.75rem; color: #64748b;">Woodworth ILD/ITD</span>
+<span class="live-screen-indicator">LIVE MONITOR</span></div>
+<div class="card-body">
+<div class="canvas-container">
+<canvas height="280" id="soundfieldCanvas" width="420"></canvas>
+</div>
+<div class="control-row">
+<span>Target: Speech (0°, 2.0m)</span>
+<span>Interferer: Babble (110°, 2.3m)</span>
+</div>
+</div>
+</div>
+<!-- 2. Dual-Microphone Beamformer Card -->
 
-    <!-- Telemetry Status Bar -->
-    <section class="status-bar">
-        <div class="status-item">
-            <span class="status-label">Directivity Index (DI):</span>
-            <span id="telemDI" class="status-val">4.8 dB</span>
-        </div>
-        <div class="status-item">
-            <span class="status-label">Feedback Suppression (ERLE):</span>
-            <span id="telemERLE" class="status-val">22.4 dB</span>
-        </div>
-        <div class="status-item">
-            <span class="status-label">Loop Gain Stability:</span>
-            <span id="telemLoopStatus" class="status-pill success">STABLE (SUPPRESSED)</span>
-        </div>
-        <div class="status-item">
-            <span class="status-label">Acoustic Angles:</span>
-            <span id="telemAngles" class="status-val">Target: 0° | Noise: 110°</span>
-        </div>
-    </section>
+<!-- 3. Adaptive Feedback Canceler Card -->
 
-    <!-- Main Dashboard Grid -->
-    <main class="dashboard-grid">
-        <!-- 1. Spatial Soundfield Card -->
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">📍 2D Spatial Soundfield & Head Shadow</span>
-                <span style="font-size: 0.75rem; color: #64748b;">Woodworth ILD/ITD</span>
-            </div>
-            <div class="card-body">
-                <div class="canvas-container">
-                    <canvas id="soundfieldCanvas" width="420" height="280"></canvas>
-                </div>
-                <div class="control-row">
-                    <span>Target: Speech (0°, 2.0m)</span>
-                    <span>Interferer: Babble (110°, 2.3m)</span>
-                </div>
-            </div>
-        </div>
+<!-- 4. 6-Band WDRC & Audiogram Card -->
 
-        <!-- 2. Dual-Microphone Beamformer Card -->
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">📡 Dual-Mic Beamformer (d = 12 mm)</span>
-                <span style="font-size: 0.75rem; color: #64748b;">Delay-and-Sum</span>
-            </div>
-            <div class="card-body">
-                <div class="canvas-container">
-                    <canvas id="polarCanvas" width="420" height="280"></canvas>
-                </div>
-                <div class="control-row">
-                    <span>Polar Pattern Mode:</span>
-                    <div class="btn-group">
-                        <button class="mode-btn" data-mode="omni">Omni</button>
-                        <button class="mode-btn active" data-mode="cardioid">Cardioid</button>
-                        <button class="mode-btn" data-mode="supercardioid">Supercardioid</button>
-                        <button class="mode-btn" data-mode="hypercardioid">Hypercardioid</button>
-                        <button class="mode-btn" data-mode="adaptive">Adaptive MVDR</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- 5. Real-Time Spectral Scope Card (Span 2 columns if available) -->
 
-        <!-- 3. Adaptive Feedback Canceler Card -->
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">🔇 Adaptive Feedback Canceler (AFC)</span>
-                <span style="font-size: 0.75rem; color: #64748b;">64-Tap NLMS</span>
-            </div>
-            <div class="card-body">
-                <div class="control-row">
-                    <span>Enable NLMS Feedback Cancellation:</span>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="afcToggle" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
+<div class="mobile-controls-pane"><div class="card">
+<div class="card-header">
+<span class="card-title">📡 Dual-Mic Beamformer (d = 12 mm)</span>
+<span style="font-size: 0.75rem; color: #64748b;">Delay-and-Sum</span>
+</div>
+<div class="card-body">
+<div class="canvas-container">
+<canvas height="280" id="polarCanvas" width="420"></canvas>
+</div>
+<div class="control-row">
+<span>Polar Pattern Mode:</span>
+<div class="btn-group">
+<button class="mode-btn" data-mode="omni">Omni</button>
+<button class="mode-btn active" data-mode="cardioid">Cardioid</button>
+<button class="mode-btn" data-mode="supercardioid">Supercardioid</button>
+<button class="mode-btn" data-mode="hypercardioid">Hypercardioid</button>
+<button class="mode-btn" data-mode="adaptive">Adaptive MVDR</button>
+</div>
+</div>
+</div>
+</div><div class="card">
+<div class="card-header">
+<span class="card-title">🔇 Adaptive Feedback Canceler (AFC)</span>
+<span style="font-size: 0.75rem; color: #64748b;">64-Tap NLMS</span>
+</div>
+<div class="card-body">
+<div class="control-row">
+<span>Enable NLMS Feedback Cancellation:</span>
+<label class="toggle-switch">
+<input checked="" id="afcToggle" type="checkbox"/>
+<span class="toggle-slider"></span>
+</label>
+</div>
+<div class="control-row">
+<span>Acoustic Loop Gain (Leakage Margin):</span>
+<div class="slider-with-val">
+<input id="loopGainSlider" max="15" min="-10" step="0.5" type="range" value="4.5"/>
+<span class="slider-val-readout" id="loopGainVal">+4.5 dB</span>
+</div>
+</div>
+<div class="control-row">
+<span>Normalized Adaptation Step (μ):</span>
+<div class="slider-with-val">
+<input id="muSlider" max="0.2" min="0.005" step="0.005" type="range" value="0.05"/>
+<span class="slider-val-readout" id="muVal">0.050</span>
+</div>
+</div>
+<div style="background: #090e18; border: 1px solid #1e293b; border-radius: 6px; padding: 12px; font-size: 0.8rem; color: #94a3b8;">
+<strong>Acoustic Whistling Mitigation:</strong> When open-loop gain exceeds 0 dB, sound leaking from the receiver into the mic creates howling feedback. The NLMS filter continuously tracks the ear canal feedback transfer function <i>H</i><sub>fb</sub>(<i>z</i>) and subtracts estimated echo <i>d̂</i>[<i>n</i>] in real time.
                 </div>
-                <div class="control-row">
-                    <span>Acoustic Loop Gain (Leakage Margin):</span>
-                    <div class="slider-with-val">
-                        <input type="range" id="loopGainSlider" min="-10" max="15" step="0.5" value="4.5">
-                        <span id="loopGainVal" class="slider-val-readout">+4.5 dB</span>
-                    </div>
-                </div>
-                <div class="control-row">
-                    <span>Normalized Adaptation Step (μ):</span>
-                    <div class="slider-with-val">
-                        <input type="range" id="muSlider" min="0.005" max="0.2" step="0.005" value="0.05">
-                        <span id="muVal" class="slider-val-readout">0.050</span>
-                    </div>
-                </div>
-                <div style="background: #090e18; border: 1px solid #1e293b; border-radius: 6px; padding: 12px; font-size: 0.8rem; color: #94a3b8;">
-                    <strong>Acoustic Whistling Mitigation:</strong> When open-loop gain exceeds 0 dB, sound leaking from the receiver into the mic creates howling feedback. The NLMS filter continuously tracks the ear canal feedback transfer function <i>H</i><sub>fb</sub>(<i>z</i>) and subtracts estimated echo <i>d̂</i>[<i>n</i>] in real time.
-                </div>
-            </div>
-        </div>
-
-        <!-- 4. 6-Band WDRC & Audiogram Card -->
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">🎚️ 6-Band WDRC & Audiological Fitting</span>
-                <select id="presetSelect" class="custom-select">
-                    <option value="mild_sloping">Mild Sloping Loss</option>
-                    <option value="steep_high_frequency" selected>Steep High-Frequency</option>
-                    <option value="flat_moderate">Flat Moderate Loss</option>
-                    <option value="normal">Normal Hearing</option>
-                </select>
-            </div>
-            <div class="card-body">
-                <div class="audiogram-container" id="audiogramSliders">
-                    <!-- Dynamic vertical sliders injected via JS -->
-                </div>
-                <div class="control-row" style="margin-top: 6px;">
-                    <span>Inspect Band Compression Curve:</span>
-                    <select id="bandSelect" class="custom-select">
-                        <option value="0">250 Hz</option>
-                        <option value="1">500 Hz</option>
-                        <option value="2">1000 Hz</option>
-                        <option value="3" selected>2000 Hz</option>
-                        <option value="4">4000 Hz</option>
-                        <option value="5">8000 Hz</option>
-                    </select>
-                </div>
-                <div class="canvas-container">
-                    <canvas id="wdrcCanvas" width="420" height="170"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- 5. Real-Time Spectral Scope Card (Span 2 columns if available) -->
-        <div class="card" style="grid-column: 1 / -1;">
-            <div class="card-header">
-                <span class="card-title">📊 Real-Time Dual Spectrum Analyzer (Pre-DSP vs Post-DSP)</span>
-                <span style="font-size: 0.75rem; color: #10b981;">60 FPS FFT Trace</span>
-            </div>
-            <div class="card-body">
-                <div class="canvas-container">
-                    <canvas id="spectrumCanvas" width="880" height="220"></canvas>
-                </div>
-                <div class="control-row">
-                    <span style="color: #64748b; font-size: 0.78rem;">Observes active howling spike elimination at 3.1 kHz and high-frequency speech enhancement across octave bands.</span>
-                    <span style="color: #38bdf8; font-size: 0.78rem;">Sampling Rate: 44.1 kHz | Processing Delay: &lt; 3.5 ms</span>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer style="text-align: center; padding: 20px; font-size: 0.8rem; color: #64748b; border-top: 1px solid #1e293b; margin-top: 20px;">
-        Designed & Implemented by <strong>Jacob El-Omar</strong> | Aalborg University — Bachelor's Project in Electronic Engineering<br>
+</div>
+</div><div class="card">
+<div class="card-header">
+<span class="card-title">🎚️ 6-Band WDRC &amp; Audiological Fitting</span>
+<select class="custom-select" id="presetSelect">
+<option value="mild_sloping">Mild Sloping Loss</option>
+<option selected="" value="steep_high_frequency">Steep High-Frequency</option>
+<option value="flat_moderate">Flat Moderate Loss</option>
+<option value="normal">Normal Hearing</option>
+</select>
+</div>
+<div class="card-body">
+<div class="audiogram-container" id="audiogramSliders">
+<!-- Dynamic vertical sliders injected via JS -->
+</div>
+<div class="control-row" style="margin-top: 6px;">
+<span>Inspect Band Compression Curve:</span>
+<select class="custom-select" id="bandSelect">
+<option value="0">250 Hz</option>
+<option value="1">500 Hz</option>
+<option value="2">1000 Hz</option>
+<option selected="" value="3">2000 Hz</option>
+<option value="4">4000 Hz</option>
+<option value="5">8000 Hz</option>
+</select>
+</div>
+<div class="canvas-container">
+<canvas height="170" id="wdrcCanvas" width="420"></canvas>
+</div>
+</div>
+</div><div class="card" style="grid-column: 1 / -1;">
+<div class="card-header">
+<span class="card-title">📊 Real-Time Dual Spectrum Analyzer (Pre-DSP vs Post-DSP)</span>
+<span style="font-size: 0.75rem; color: #10b981;">60 FPS FFT Trace</span>
+</div>
+<div class="card-body">
+<div class="canvas-container">
+<canvas height="220" id="spectrumCanvas" width="880"></canvas>
+</div>
+<div class="control-row">
+<span style="color: #64748b; font-size: 0.78rem;">Observes active howling spike elimination at 3.1 kHz and high-frequency speech enhancement across octave bands.</span>
+<span style="color: #38bdf8; font-size: 0.78rem;">Sampling Rate: 44.1 kHz | Processing Delay: &lt; 3.5 ms</span>
+</div>
+</div>
+</div></div></main>
+<!-- Footer -->
+<footer style="text-align: center; padding: 20px; font-size: 0.8rem; color: #64748b; border-top: 1px solid #1e293b; margin-top: 20px;">
+        Designed &amp; Implemented by <strong>Jacob El-Omar</strong> | Aalborg University — Bachelor's Project in Electronic Engineering<br/>
         Inspired by challenges in modern Hearing Instrument Audio DSP Engineering
     </footer>
-
-    <script type="module" src="js/app.js"></script>
-
-    <div class="guide-modal-footer">
-                <button id="guideStart" class="btn-guide-start">🚀 Start Interactive Simulator</button>
-            </div>
-        </div>
-    </div>
-
-    
-
-
-
-    
-
-
-    
-
-    <script>
+<script src="js/app.js" type="module"></script>
+<div class="guide-modal-footer">
+<button class="btn-guide-start" id="guideStart">🚀 Start Interactive Simulator</button>
+</div>
+<script>
     (function() {
         const steps = [
     {
@@ -304,7 +284,17 @@
             if (targetEl) {
                 highlightedEl = targetEl;
                 targetEl.classList.add('tour-spotlight-active');
-                targetEl.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+                if (window.innerWidth <= 640) {
+                if (targetEl.closest('.live-sticky-screen')) {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    const rect = targetEl.getBoundingClientRect();
+                    const desiredY = 220 + (window.innerHeight - 220 - 160) / 2;
+                    window.scrollBy({ top: rect.top - desiredY, behavior: 'smooth' });
+                }
+            } else {
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+            }
                 setTimeout(() => positionCard(targetEl), 140);
             } else {
                 card.style.top = '50%';
@@ -387,11 +377,7 @@
         }
     })();
     </script>
-
-
-    
-
-    <script>
+<script>
     (function() {
         const steps = [
     {
@@ -600,29 +586,26 @@
         }
     })();
     </script>
-
 <!-- Interactive Guided Yellow Spotlight Tour Engine (Zero Blur) -->
-    <div class="tour-card" id="tourCard">
-        <div class="tour-badge-row">
-            <span class="tour-step-badge" id="tourStepBadge">Step 1 of 4</span>
-            <button class="tour-btn-skip" id="tourBtnSkip">✕ Skip Tour</button>
-        </div>
-        <h4 class="tour-action-title" id="tourTitle">Action Title</h4>
-        <div class="tour-happens-box" id="tourHappens"><strong>⚡ What Happens:</strong> Live reaction</div>
-        <div class="tour-why-box" id="tourWhy"><strong>💡 Why:</strong> Reason</div>
-        <div class="tour-footer">
-            <div class="tour-dots" id="tourDots"></div>
-            <div class="tour-controls">
-                <button class="btn-tour-nav btn-tour-prev" id="tourBtnPrev">⇦ Back</button>
-                <button class="btn-tour-nav btn-tour-next" id="tourBtnNext">Next ➔</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Floating Tour Launcher Pill -->
-    <button class="btn-tour-launcher" id="btnTourLauncher">🎮 Guided Tour</button>
-
-    <script>
+<div class="tour-card" id="tourCard">
+<div class="tour-badge-row">
+<span class="tour-step-badge" id="tourStepBadge">Step 1 of 4</span>
+<button class="tour-btn-skip" id="tourBtnSkip">✕ Skip Tour</button>
+</div>
+<h4 class="tour-action-title" id="tourTitle">Action Title</h4>
+<div class="tour-happens-box" id="tourHappens"><strong>⚡ What Happens:</strong> Live reaction</div>
+<div class="tour-why-box" id="tourWhy"><strong>💡 Why:</strong> Reason</div>
+<div class="tour-footer">
+<div class="tour-dots" id="tourDots"></div>
+<div class="tour-controls">
+<button class="btn-tour-nav btn-tour-prev" id="tourBtnPrev">⇦ Back</button>
+<button class="btn-tour-nav btn-tour-next" id="tourBtnNext">Next ➔</button>
+</div>
+</div>
+</div>
+<!-- Floating Tour Launcher Pill -->
+<button class="btn-tour-launcher" id="btnTourLauncher">🎮 Guided Tour</button>
+<script>
     (function() {
         const steps = [
     {
