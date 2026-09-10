@@ -387,7 +387,7 @@ input[type=range] {
     margin: 0 !important;
     padding: 0 !important;
     width: 100vw !important;
-    height: 100vh !important;
+    height: 100% !important; height: 100dvh !important;
     height: 100dvh !important;
     overflow: hidden !important;
   }
@@ -1423,7 +1423,7 @@ body.immersive-fullscreen {
   position: fixed !important;
   inset: 0 !important;
   width: 100vw !important;
-  height: 100vh !important;
+  height: 100% !important; height: 100dvh !important;
   height: 100dvh !important;
   z-index: 999999 !important;
   overflow: hidden !important;
@@ -1504,9 +1504,9 @@ body.immersive-fullscreen .live-sticky-screen {
 /* Responsive Mobile & Desktop Layout Rules */
 @media (max-width: 900px) {
   html, body {
-    width: 390px !important;
-    max-width: 390px !important;
-    height: 100vh !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important; height: 100dvh !important;
     height: 100dvh !important;
     overflow: hidden !important;
     margin: 0 !important;
@@ -1519,8 +1519,8 @@ body.immersive-fullscreen .live-sticky-screen {
   }
   .dashboard-grid {
     display: block !important;
-    width: 390px !important;
-    max-width: 390px !important;
+    width: 100% !important;
+    max-width: 100% !important;
     height: 100% !important;
     height: 100dvh !important;
     margin: 0 !important;
@@ -1531,8 +1531,8 @@ body.immersive-fullscreen .live-sticky-screen {
   .live-sticky-screen {
     position: absolute !important;
     inset: 0 !important;
-    width: 390px !important;
-    max-width: 390px !important;
+    width: 100% !important;
+    max-width: 100% !important;
     height: 100% !important;
     border: none !important;
     border-radius: 0 !important;
@@ -1572,8 +1572,8 @@ body.immersive-fullscreen .live-sticky-screen {
   .hud-overlay-layer {
     position: absolute !important;
     inset: 0 !important;
-    width: 390px !important;
-    max-width: 390px !important;
+    width: 100% !important;
+    max-width: 100% !important;
     height: 100% !important;
     pointer-events: none !important;
   }

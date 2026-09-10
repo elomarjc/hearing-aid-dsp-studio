@@ -446,4 +446,53 @@ window.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Direct pointer touch drag on vertical HUD rails
+  function attachHearingRailDrag(container, onFracChange) {
+    if (!container) return;
+    container.style.touchAction = 'none';
+    let dragging = false;
+    const handleDrag = (e) => {
+      const rect = container.getBoundingClientRect();
+      const frac = Math.max(0, Math.min(1, (rect.bottom - e.clientY) / rect.height));
+      onFracChange(frac);
+    };
+    container.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      container.setPointerCapture?.(e.pointerId);
+      handleDrag(e);
+    });
+    container.addEventListener('pointermove', (e) => {
+      if (dragging) handleDrag(e);
+    });
+    const stopDrag = (e) => {
+      if (dragging) {
+        dragging = false;
+        try { container.releasePointerCapture?.(e.pointerId); } catch (_) {}
+      }
+    };
+    container.addEventListener('pointerup', stopDrag);
+    container.addEventListener('pointercancel', stopDrag);
+  }
+
+  const gainRailTrack = document.querySelector('.hud-left-rail .hud-rail-track-container');
+  attachHearingRailDrag(gainRailTrack, (frac) => {
+    const val = (frac * 15).toFixed(1);
+    if (dGain) {
+      dGain.value = val;
+      dGain.dispatchEvent(new Event('input', { bubbles: true }));
+      updateGainHUD(val);
+    }
+  });
+
+  const lmsRailTrack = document.querySelector('.hud-right-rail .hud-rail-track-container');
+  attachHearingRailDrag(lmsRailTrack, (frac) => {
+    const val = (0.001 + frac * 0.049).toFixed(3);
+    if (dLms) {
+      dLms.value = val;
+      dLms.dispatchEvent(new Event('input', { bubbles: true }));
+      updateLmsHUD(val);
+    }
+  });
+
 })();

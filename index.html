@@ -3,7 +3,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="theme-color" content="#06090e"/>
 <title>Audiological DSP Studio — Binaural Hearing Instrument Simulator</title>
 <link href="css/style.css?v=14.0" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -163,16 +167,9 @@
 
     <!-- Bottom Area: Trigger Pill + Centered Transport + Modes Bar -->
     <div class="hud-bottom-area">
-      <div class="hud-bottom-subrow">
+      <div class="hud-bottom-subrow" style="justify-content: center;">
         <!-- Left Controls Drawer Trigger Pill -->
-        <button class="hud-aocs-trigger-pill" id="btn-trigger-controls-drawer">
-          <span class="aocs-trigger-icon">🦻</span>
-          <div class="aocs-trigger-text">
-            <span class="aocs-trigger-title">DSP RACK</span>
-            <span class="aocs-trigger-sub">WDRC &amp; AFC</span>
-          </div>
-          <span class="aocs-trigger-chevron">›</span>
-        </button>
+        
 
         <!-- Center Transport Cluster -->
         <div class="hud-sim-transport">
