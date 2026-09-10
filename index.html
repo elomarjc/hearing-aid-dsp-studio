@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audiological DSP Studio — Binaural Hearing Instrument Simulator</title>
-    <link rel="stylesheet" href="css/style.css?v=3.0">
+    <link rel="stylesheet" href="css/style.css?v=4.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
             <p class="brand-subtitle">Binaural Hearing Instrument Signal Chain: Spatial Beamforming, NLMS Feedback Cancellation & 6-Band WDRC</p>
         </div>
         <div class="header-controls">
-            <button id="guideBtn" class="btn-guide">📖 How to Use & Problem Solved</button>
+            <button id="guideBtn" class="btn-guide">🎮 Guided Tour</button>
             <button id="liveAudioBtn" class="btn-audition">🔇 Live Audio Muted (Audition)</button>
             <a href="https://github.com/elomarjc/hearing-aid-dsp-studio" target="_blank" class="btn-audition">GitHub Source</a>
         </div>
@@ -180,121 +180,655 @@
 
     <script type="module" src="js/app.js"></script>
 
-    <!-- Interactive Guide & Problem Overview Modal -->
-    <div id="guideModal" class="guide-modal-overlay">
-        <div class="guide-modal-card">
-            <div class="guide-modal-header">
-                <h2>🦻 Binaural Audiological DSP Studio</h2>
-                <button id="guideClose" class="guide-modal-close" aria-label="Close modal">&times;</button>
-            </div>
-            <div class="guide-modal-body">
-                <div class="guide-section">
-                    <h3>🎯 The Industrial Problem Solved</h3>
-                    <p>Hearing-impaired patients in noisy social settings struggle to separate target speech from background babble (the cocktail party problem). Furthermore, when high amplification is applied, acoustic feedback (sound leaking from the speaker back into the microphone) creates painful howling whistling. Hearing aids must provide spatial directional filtering, cancel acoustic feedback in milliseconds, and compress wide dynamic ranges into the patient's impaired hearing span.</p>
-                </div>
-
-                <div class="guide-section">
-                    <h3>💡 How This Digital Twin Solves It</h3>
-                    <p>Implements a complete real-time hearing instrument audio DSP chain: dual-microphone delay-and-sum beamforming (cardioid, supercardioid, adaptive MVDR) with head shadow diffraction, a 64-tap Normalized Least Mean Squares (NLMS) acoustic feedback canceler (&gt;20 dB ERLE), and 6-band Wide Dynamic Range Compression (WDRC) fitted to patient audiograms.</p>
-                </div>
-
-                <div class="guide-section">
-                    <h3>🕹️ Interactive Quickstart Tutorial (Try This Now!)</h3>
-                    <ul class="guide-step-list">
-                    <li class="guide-step-item">
-                        <span class="guide-step-num">1</span>
-                        <div class="guide-step-content">
-                            <strong>Spatial Soundfield Positioning:</strong> Drag the Target Speech (Green) and Interfering Babble (Red) dots around the 2D head model; switch beamformer modes to watch the polar pattern steer a null toward the noise.
-                        </div>
-                    </li>
-                    <li class="guide-step-item">
-                        <span class="guide-step-num">2</span>
-                        <div class="guide-step-content">
-                            <strong>Acoustic Feedback & Howling Suppression:</strong> Increase Acoustic Loop Gain to +5 dB and toggle NLMS Feedback Cancellation OFF to hear/see howling feedback instability; toggle it back ON to observe feedback cancellation in &lt;30 ms.
-                        </div>
-                    </li>
-                    <li class="guide-step-item">
-                        <span class="guide-step-num">3</span>
-                        <div class="guide-step-content">
-                            <strong>Audiological Fitting:</strong> Adjust the 6 audiogram sliders (250 Hz to 8 kHz) or select presets like 'Steep High-Frequency' to observe dynamic WDRC gain curves.
-                        </div>
-                    </li>
-                    </ul>
-                </div>
-
-                <div class="guide-section">
-                    <h3>📊 Telemetry & Control Glossary</h3>
-                    <ul style="padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem;">
-                        <li><strong>Directivity Index (DI):</strong> Quantifies spatial noise suppression; higher DI values mean stronger attenuation of sound arriving from non-target directions.</li><li><strong>ERLE (Echo Return Loss Enhancement):</strong> Measures how many decibels of acoustic whistling/howling feedback the NLMS adaptive filter eliminates (typically &gt;20 dB).</li><li><strong>WDRC (Wide Dynamic Range Compression):</strong> Amplifies soft speech sounds while compressing loud sounds to restore audibility within the patient's narrow dynamic hearing range.</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="guide-modal-footer">
+    <div class="guide-modal-footer">
                 <button id="guideStart" class="btn-guide-start">🚀 Start Interactive Simulator</button>
             </div>
         </div>
     </div>
 
-    <!-- Floating Quick Guide Pill (Always visible & 1-tap accessible on mobile & desktop) -->
-    <button id="guideBtnFloating" class="btn-guide-floating" aria-label="Open Guide">💡 Tutorial & Problem Solved</button>
+    
 
-    <!-- Modal Toggle & Auto-Open Script -->
+
+
+    
+
+
+    
+
     <script>
-        (function() {
-            const guideBtn = document.getElementById('guideBtn');
-            const guideBtnFloating = document.getElementById('guideBtnFloating');
-            const guideModal = document.getElementById('guideModal');
-            const guideClose = document.getElementById('guideClose');
-            const guideStart = document.getElementById('guideStart');
+    (function() {
+        const steps = [
+    {
+        "target": "#soundfieldCanvas",
+        "title": "\ud83d\udc49 Step 1: Drag Speech (Green) & Noise (Red) Dots",
+        "why": "Solves the 'cocktail party problem' by adjusting spatial angles of speech and noise relative to the binaural head model."
+    },
+    {
+        "target": "#presetSelect",
+        "title": "\ud83d\udc49 Step 2: Select 'Adaptive MVDR' Beamformer",
+        "why": "Adaptive Minimum Variance Distortionless Response steers an acoustic directional null directly toward babble noise while preserving speech."
+    },
+    {
+        "target": "#loopGainSlider",
+        "title": "\ud83d\udc49 Step 3: Increase Loop Gain & Toggle AFC",
+        "why": "Acoustic feedback causes painful whistling howling. The Normalized LMS adaptive filter cancels howling in <30 ms with >20 dB feedback cancellation."
+    },
+    {
+        "target": "#wdrcCanvas",
+        "title": "\ud83d\udc49 Step 4: Inspect 6-Band WDRC Fitting Curves",
+        "why": "Wide Dynamic Range Compression restores audibility by amplifying soft consonants while compressing loud sounds into the residual hearing span."
+    }
+];
+        const tourKey = 'tour_done_hearing-aid-dsp-studio';
+        let currentStep = 0;
+        let highlightedEl = null;
 
-            function openModal() {
-                if (guideModal) {
-                    guideModal.classList.add('active');
-                    guideModal.style.opacity = '1';
-                    guideModal.style.pointerEvents = 'auto';
-                }
+        const backdrop = document.getElementById('tourBackdrop');
+        const card = document.getElementById('tourCard');
+        const badge = document.getElementById('tourStepBadge');
+        const title = document.getElementById('tourTitle');
+        const why = document.getElementById('tourWhy');
+        const dotsContainer = document.getElementById('tourDots');
+        const prevBtn = document.getElementById('tourBtnPrev');
+        const nextBtn = document.getElementById('tourBtnNext');
+        const skipBtn = document.getElementById('tourBtnSkip');
+        const launcherBtn = document.getElementById('btnTourLauncher');
+        const guideBtn = document.getElementById('guideBtn');
+
+        if (!backdrop || !card) return;
+
+        // Build step dots
+        dotsContainer.innerHTML = '';
+        steps.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.className = 'tour-dot' + (i === 0 ? ' active' : '');
+            dotsContainer.appendChild(dot);
+        });
+
+        function positionCard(targetEl) {
+            if (window.innerWidth <= 640) {
+                card.style.top = 'auto';
+                card.style.bottom = '12px';
+                card.style.left = '10px';
+                card.style.right = '10px';
+                card.style.transform = 'none';
+                return;
             }
 
-            function closeModal() {
-                if (guideModal) {
-                    guideModal.classList.remove('active');
-                    guideModal.style.opacity = '0';
-                    guideModal.style.pointerEvents = 'none';
-                }
-                try {
-                    sessionStorage.setItem('guide_dismissed_' + window.location.pathname, '1');
-                } catch(e) {}
+            const rect = targetEl.getBoundingClientRect();
+            const cardW = 420;
+            let top = rect.bottom + 14;
+            let left = rect.left;
+
+            if (top + 210 > window.innerHeight && rect.top > 220) {
+                top = rect.top - 190;
+            }
+            if (left + cardW > window.innerWidth) {
+                left = window.innerWidth - cardW - 20;
+            }
+            if (left < 20) left = 20;
+
+            card.style.top = Math.max(20, top) + 'px';
+            card.style.left = left + 'px';
+            card.style.bottom = 'auto';
+            card.style.right = 'auto';
+            card.style.transform = 'none';
+        }
+
+        function showStep(index) {
+            if (index < 0 || index >= steps.length) return;
+            currentStep = index;
+
+            if (highlightedEl) {
+                highlightedEl.classList.remove('tour-spotlight-active');
             }
 
-            if (guideBtn) guideBtn.addEventListener('click', openModal);
-            if (guideBtnFloating) guideBtnFloating.addEventListener('click', openModal);
-            if (guideClose) guideClose.addEventListener('click', closeModal);
-            if (guideStart) guideStart.addEventListener('click', closeModal);
-
-            if (guideModal) {
-                guideModal.addEventListener('click', function(e) {
-                    if (e.target === guideModal) closeModal();
-                });
-            }
-
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && guideModal && guideModal.classList.contains('active')) {
-                    closeModal();
-                }
-            });
-
-            // Auto-open on initial visit for immediate problem & tutorial clarity on both mobile and desktop
+            const step = steps[index];
+            let targetEl = null;
             try {
-                const dismissed = sessionStorage.getItem('guide_dismissed_' + window.location.pathname);
-                const forceOpen = window.location.search.indexOf('guide') !== -1;
-                if (!dismissed || forceOpen) {
-                    setTimeout(openModal, 120);
-                }
-            } catch(e) {
-                setTimeout(openModal, 120);
+                targetEl = document.querySelector(step.target);
+            } catch(e) {}
+
+            badge.textContent = `Step ${index + 1} of ${steps.length}`;
+            title.textContent = step.title;
+            why.innerHTML = `<strong>Why:</strong> ${step.why}`;
+
+            // Update dot indicators
+            const dots = dotsContainer.querySelectorAll('.tour-dot');
+            dots.forEach((d, i) => d.classList.toggle('active', i === index));
+
+            // Button label updates
+            prevBtn.style.visibility = index === 0 ? 'hidden' : 'visible';
+            nextBtn.textContent = index === steps.length - 1 ? 'Finish 🚀' : 'Next ➔';
+
+            if (targetEl) {
+                highlightedEl = targetEl;
+                targetEl.classList.add('tour-spotlight-active');
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+                setTimeout(() => positionCard(targetEl), 140);
+            } else {
+                card.style.top = '50%';
+                card.style.left = '50%';
+                card.style.transform = 'translate(-50%, -50%)';
             }
-        })();
+
+            backdrop.classList.add('active');
+            card.classList.add('active');
+        }
+
+        function endTour() {
+            if (highlightedEl) {
+                highlightedEl.classList.remove('tour-spotlight-active');
+                highlightedEl = null;
+            }
+            backdrop.classList.remove('active');
+            card.classList.remove('active');
+            try {
+                sessionStorage.setItem(tourKey, '1');
+            } catch(e) {}
+        }
+
+        function startTour() {
+            showStep(0);
+        }
+
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (currentStep < steps.length - 1) {
+                showStep(currentStep + 1);
+            } else {
+                endTour();
+            }
+        });
+
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (currentStep > 0) showStep(currentStep - 1);
+        });
+
+        skipBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            endTour();
+        });
+
+        backdrop.addEventListener('click', endTour);
+
+        if (launcherBtn) {
+            launcherBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                startTour();
+            });
+        }
+
+        if (guideBtn) {
+            guideBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                startTour();
+            });
+        }
+
+        // Auto-launch guided spotlight tour on first visit
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                try {
+                    const completed = sessionStorage.getItem(tourKey);
+                    if (!completed) {
+                        startTour();
+                    }
+                } catch(e) {
+                    startTour();
+                }
+            }, 450);
+        });
+
+        // URL parameter override: ?tour=1
+        if (window.location.search.indexOf('tour') !== -1) {
+            setTimeout(startTour, 300);
+        }
+    })();
     </script>
 
+
+    
+
+    <script>
+    (function() {
+        const steps = [
+    {
+        "target": "#soundfieldCanvas",
+        "title": "\ud83d\udc49 Step 1: Drag Speech (Green) & Noise (Red) Dots",
+        "why": "Solves the 'cocktail party problem' by adjusting spatial angles of speech and noise relative to the binaural head model."
+    },
+    {
+        "target": "#presetSelect",
+        "title": "\ud83d\udc49 Step 2: Select 'Adaptive MVDR' Beamformer",
+        "why": "Adaptive Minimum Variance Distortionless Response steers an acoustic directional null directly toward babble noise while preserving speech."
+    },
+    {
+        "target": "#loopGainSlider",
+        "title": "\ud83d\udc49 Step 3: Increase Loop Gain & Toggle AFC",
+        "why": "Acoustic feedback causes painful whistling howling. The Normalized LMS adaptive filter cancels howling in <30 ms with >20 dB feedback cancellation."
+    },
+    {
+        "target": "#wdrcCanvas",
+        "title": "\ud83d\udc49 Step 4: Inspect 6-Band WDRC Fitting Curves",
+        "why": "Wide Dynamic Range Compression restores audibility by amplifying soft consonants while compressing loud sounds into the residual hearing span."
+    }
+];
+        const tourKey = 'tour_done_hearing-aid-dsp-studio';
+        let currentStep = 0;
+        let highlightedEl = null;
+
+        const backdrop = document.getElementById('tourBackdrop');
+        const card = document.getElementById('tourCard');
+        const badge = document.getElementById('tourStepBadge');
+        const title = document.getElementById('tourTitle');
+        const why = document.getElementById('tourWhy');
+        const dotsContainer = document.getElementById('tourDots');
+        const prevBtn = document.getElementById('tourBtnPrev');
+        const nextBtn = document.getElementById('tourBtnNext');
+        const skipBtn = document.getElementById('tourBtnSkip');
+        const launcherBtn = document.getElementById('btnTourLauncher');
+        const guideBtn = document.getElementById('guideBtn');
+
+        if (!backdrop || !card) return;
+
+        // Build step dots
+        dotsContainer.innerHTML = '';
+        steps.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.className = 'tour-dot' + (i === 0 ? ' active' : '');
+            dotsContainer.appendChild(dot);
+        });
+
+        function positionCard(targetEl) {
+            if (window.innerWidth <= 640) {
+                if (targetEl) {
+                    const rect = targetEl.getBoundingClientRect();
+                    // If target is in lower half of screen, dock card at top so control is unobstructed!
+                    if (rect.top > window.innerHeight * 0.44) {
+                        card.style.top = '12px';
+                        card.style.bottom = 'auto';
+                    } else {
+                        card.style.top = 'auto';
+                        card.style.bottom = '12px';
+                    }
+                } else {
+                    card.style.top = 'auto';
+                    card.style.bottom = '12px';
+                }
+                card.style.left = '10px';
+                card.style.right = '10px';
+                card.style.transform = 'none';
+                return;
+            }
+
+            if (!targetEl) {
+                card.style.top = '50%';
+                card.style.left = '50%';
+                card.style.transform = 'translate(-50%, -50%)';
+                return;
+            }
+
+            const rect = targetEl.getBoundingClientRect();
+            const cardW = 420;
+            let top = rect.bottom + 14;
+            let left = rect.left;
+
+            if (top + 210 > window.innerHeight && rect.top > 220) {
+                top = rect.top - 190;
+            }
+            if (left + cardW > window.innerWidth) {
+                left = window.innerWidth - cardW - 20;
+            }
+            if (left < 20) left = 20;
+
+            card.style.top = Math.max(20, top) + 'px';
+            card.style.left = left + 'px';
+            card.style.bottom = 'auto';
+            card.style.right = 'auto';
+            card.style.transform = 'none';
+        }
+
+        function showStep(index) {
+            if (index < 0 || index >= steps.length) return;
+            currentStep = index;
+
+            if (highlightedEl) {
+                highlightedEl.classList.remove('tour-spotlight-active');
+            }
+
+            const step = steps[index];
+            let targetEl = null;
+            try {
+                targetEl = document.querySelector(step.target);
+            } catch(e) {}
+
+            badge.textContent = `Step ${index + 1} of ${steps.length}`;
+            title.textContent = step.title;
+            why.innerHTML = `<strong>Why:</strong> ${step.why}`;
+
+            // Update dot indicators
+            const dots = dotsContainer.querySelectorAll('.tour-dot');
+            dots.forEach((d, i) => d.classList.toggle('active', i === index));
+
+            // Button label updates
+            prevBtn.style.visibility = index === 0 ? 'hidden' : 'visible';
+            nextBtn.textContent = index === steps.length - 1 ? 'Finish 🚀' : 'Next ➔';
+
+            if (targetEl) {
+                highlightedEl = targetEl;
+                targetEl.classList.add('tour-spotlight-active');
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+                setTimeout(() => positionCard(targetEl), 150);
+            } else {
+                positionCard(null);
+            }
+
+            backdrop.classList.add('active');
+            card.classList.add('active');
+        }
+
+        function endTour() {
+            if (highlightedEl) {
+                highlightedEl.classList.remove('tour-spotlight-active');
+                highlightedEl = null;
+            }
+            backdrop.classList.remove('active');
+            card.classList.remove('active');
+            try {
+                sessionStorage.setItem(tourKey, '1');
+            } catch(e) {}
+        }
+
+        function startTour() {
+            showStep(0);
+        }
+
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (currentStep < steps.length - 1) {
+                showStep(currentStep + 1);
+            } else {
+                endTour();
+            }
+        });
+
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (currentStep > 0) showStep(currentStep - 1);
+        });
+
+        skipBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            endTour();
+        });
+
+        backdrop.addEventListener('click', endTour);
+
+        if (launcherBtn) {
+            launcherBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                startTour();
+            });
+        }
+
+        if (guideBtn) {
+            guideBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                startTour();
+            });
+        }
+
+        // Auto-launch guided spotlight tour on first visit
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                try {
+                    const completed = sessionStorage.getItem(tourKey);
+                    if (!completed) {
+                        startTour();
+                    }
+                } catch(e) {
+                    startTour();
+                }
+            }, 450);
+        });
+
+        // URL parameter override: ?tour=1
+        if (window.location.search.indexOf('tour') !== -1) {
+            setTimeout(startTour, 300);
+        }
+    })();
+    </script>
+<!-- Interactive Guided Spotlight Tour Engine -->
+    <div class="tour-backdrop" id="tourBackdrop"></div>
+    <div class="tour-card" id="tourCard">
+        <div class="tour-badge-row">
+            <span class="tour-step-badge" id="tourStepBadge">Step 1 of 4</span>
+            <button class="tour-btn-skip" id="tourBtnSkip">✕ Skip Tour</button>
+        </div>
+        <h4 class="tour-action-title" id="tourTitle">Action Title</h4>
+        <div class="tour-why-box" id="tourWhy"><strong>Why:</strong> Reason</div>
+        <div class="tour-footer">
+            <div class="tour-dots" id="tourDots"></div>
+            <div class="tour-controls">
+                <button class="btn-tour-nav btn-tour-prev" id="tourBtnPrev">⇦ Back</button>
+                <button class="btn-tour-nav btn-tour-next" id="tourBtnNext">Next ➔</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Tour Launcher Pill -->
+    <button class="btn-tour-launcher" id="btnTourLauncher">🎮 Guided Tour</button>
+
+    <script>
+    (function() {
+        const steps = [
+    {
+        "target": "#soundfieldCanvas",
+        "title": "\ud83d\udc49 Step 1: Drag Speech (Green) & Noise (Red) Dots",
+        "why": "Solves the 'cocktail party problem' by adjusting spatial angles of speech and noise relative to the binaural head model."
+    },
+    {
+        "target": "#presetSelect",
+        "title": "\ud83d\udc49 Step 2: Select 'Adaptive MVDR' Beamformer",
+        "why": "Adaptive Minimum Variance Distortionless Response steers an acoustic directional null directly toward babble noise while preserving speech."
+    },
+    {
+        "target": "#loopGainSlider",
+        "title": "\ud83d\udc49 Step 3: Increase Loop Gain & Toggle AFC",
+        "why": "Acoustic feedback causes painful whistling howling. The Normalized LMS adaptive filter cancels howling in <30 ms with >20 dB feedback cancellation."
+    },
+    {
+        "target": "#wdrcCanvas",
+        "title": "\ud83d\udc49 Step 4: Inspect 6-Band WDRC Fitting Curves",
+        "why": "Wide Dynamic Range Compression restores audibility by amplifying soft consonants while compressing loud sounds into the residual hearing span."
+    }
+];
+        const tourKey = 'tour_done_hearing-aid-dsp-studio';
+        let currentStep = 0;
+        let highlightedEl = null;
+
+        const backdrop = document.getElementById('tourBackdrop');
+        const card = document.getElementById('tourCard');
+        const badge = document.getElementById('tourStepBadge');
+        const title = document.getElementById('tourTitle');
+        const why = document.getElementById('tourWhy');
+        const dotsContainer = document.getElementById('tourDots');
+        const prevBtn = document.getElementById('tourBtnPrev');
+        const nextBtn = document.getElementById('tourBtnNext');
+        const skipBtn = document.getElementById('tourBtnSkip');
+        const launcherBtn = document.getElementById('btnTourLauncher');
+        const guideBtn = document.getElementById('guideBtn');
+
+        if (!backdrop || !card) return;
+
+        // Build step dots
+        dotsContainer.innerHTML = '';
+        steps.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.className = 'tour-dot' + (i === 0 ? ' active' : '');
+            dotsContainer.appendChild(dot);
+        });
+
+        function positionCard(targetEl) {
+            if (window.innerWidth <= 640) {
+                if (targetEl) {
+                    const rect = targetEl.getBoundingClientRect();
+                    // If target is in lower half of screen, dock card at top so control is unobstructed!
+                    if (rect.top > window.innerHeight * 0.44) {
+                        card.style.top = '12px';
+                        card.style.bottom = 'auto';
+                    } else {
+                        card.style.top = 'auto';
+                        card.style.bottom = '12px';
+                    }
+                } else {
+                    card.style.top = 'auto';
+                    card.style.bottom = '12px';
+                }
+                card.style.left = '10px';
+                card.style.right = '10px';
+                card.style.transform = 'none';
+                return;
+            }
+
+            if (!targetEl) {
+                card.style.top = '50%';
+                card.style.left = '50%';
+                card.style.transform = 'translate(-50%, -50%)';
+                return;
+            }
+
+            const rect = targetEl.getBoundingClientRect();
+            const cardW = 420;
+            let top = rect.bottom + 14;
+            let left = rect.left;
+
+            if (top + 210 > window.innerHeight && rect.top > 220) {
+                top = rect.top - 190;
+            }
+            if (left + cardW > window.innerWidth) {
+                left = window.innerWidth - cardW - 20;
+            }
+            if (left < 20) left = 20;
+
+            card.style.top = Math.max(20, top) + 'px';
+            card.style.left = left + 'px';
+            card.style.bottom = 'auto';
+            card.style.right = 'auto';
+            card.style.transform = 'none';
+        }
+
+        function showStep(index) {
+            if (index < 0 || index >= steps.length) return;
+            currentStep = index;
+
+            if (highlightedEl) {
+                highlightedEl.classList.remove('tour-spotlight-active');
+            }
+
+            const step = steps[index];
+            let targetEl = null;
+            try {
+                targetEl = document.querySelector(step.target);
+            } catch(e) {}
+
+            badge.textContent = `Step ${index + 1} of ${steps.length}`;
+            title.textContent = step.title;
+            why.innerHTML = `<strong>Why:</strong> ${step.why}`;
+
+            // Update dot indicators
+            const dots = dotsContainer.querySelectorAll('.tour-dot');
+            dots.forEach((d, i) => d.classList.toggle('active', i === index));
+
+            // Button label updates
+            prevBtn.style.visibility = index === 0 ? 'hidden' : 'visible';
+            nextBtn.textContent = index === steps.length - 1 ? 'Finish 🚀' : 'Next ➔';
+
+            if (targetEl) {
+                highlightedEl = targetEl;
+                targetEl.classList.add('tour-spotlight-active');
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+                setTimeout(() => positionCard(targetEl), 150);
+            } else {
+                positionCard(null);
+            }
+
+            backdrop.classList.add('active');
+            card.classList.add('active');
+        }
+
+        function endTour() {
+            if (highlightedEl) {
+                highlightedEl.classList.remove('tour-spotlight-active');
+                highlightedEl = null;
+            }
+            backdrop.classList.remove('active');
+            card.classList.remove('active');
+            try {
+                sessionStorage.setItem(tourKey, '1');
+            } catch(e) {}
+        }
+
+        function startTour() {
+            showStep(0);
+        }
+
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (currentStep < steps.length - 1) {
+                showStep(currentStep + 1);
+            } else {
+                endTour();
+            }
+        });
+
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (currentStep > 0) showStep(currentStep - 1);
+        });
+
+        skipBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            endTour();
+        });
+
+        backdrop.addEventListener('click', endTour);
+
+        if (launcherBtn) {
+            launcherBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                startTour();
+            });
+        }
+
+        if (guideBtn) {
+            guideBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                startTour();
+            });
+        }
+
+        // Auto-launch guided spotlight tour on first visit
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                try {
+                    const completed = sessionStorage.getItem(tourKey);
+                    if (!completed) {
+                        startTour();
+                    }
+                } catch(e) {
+                    startTour();
+                }
+            }, 450);
+        });
+
+        // URL parameter override: ?tour=1
+        if (window.location.search.indexOf('tour') !== -1) {
+            setTimeout(startTour, 300);
+        }
+    })();
+    </script>
 </body>
 </html>
