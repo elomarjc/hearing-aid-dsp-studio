@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Audiological DSP Studio — Binaural Hearing Instrument Simulator</title>
-<link href="css/style.css?v=12.0" rel="stylesheet"/>
+<link href="css/style.css?v=14.0" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet"/>
@@ -380,21 +380,70 @@
         });
     }
 
-    // Auto-launch tour on first visit
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            try {
-                const done = sessionStorage.getItem(tourKey);
-                if (!done) startTour();
-            } catch(e) {
-                startTour();
-            }
-        }, 500);
-    });
+    // Tour launched ONLY on explicit button tap
 
     if (window.location.search.indexOf('tour') !== -1) {
         setTimeout(startTour, 350);
     }
+})();
+</script>
+<script>
+// Universal Collapsible Drawer Accordion System
+(function setupDrawerAccordions() {
+  function initAccordions() {
+    const drawer = document.querySelector('.mobile-drawer-body');
+    if (!drawer) return;
+    const cards = drawer.querySelectorAll('.card, .control-card, .panel-card, .panel, .panel-section-wrapper');
+    cards.forEach((card, index) => {
+      const header = card.querySelector('.card-header, .card-title, .panel-header');
+      if (!header) return;
+      
+      let arrow = header.querySelector('.accordion-arrow');
+      if (!arrow) {
+        arrow = document.createElement('span');
+        arrow.className = 'accordion-arrow';
+        arrow.textContent = '▾';
+        header.appendChild(arrow);
+      }
+      
+      const body = card.querySelector('.card-body, .panel-section');
+      const isMobile = window.innerWidth <= 900;
+      if (isMobile && index > 0 && !card.classList.contains('always-open')) {
+        card.classList.add('is-collapsed');
+        arrow.textContent = '▸';
+        if (body) {
+          body.style.display = 'none';
+        } else {
+          Array.from(card.children).forEach(child => {
+            if (child !== header) child.style.display = 'none';
+          });
+        }
+      }
+      
+      header.style.cursor = 'pointer';
+      header.style.userSelect = 'none';
+      if (!header._hasAccordionClick) {
+        header._hasAccordionClick = true;
+        header.addEventListener('click', (e) => {
+          if (['INPUT', 'BUTTON', 'SELECT', 'A'].includes(e.target.tagName)) return;
+          const isCollapsed = card.classList.toggle('is-collapsed');
+          arrow.textContent = isCollapsed ? '▸' : '▾';
+          if (body) {
+            body.style.display = isCollapsed ? 'none' : '';
+          } else {
+            Array.from(card.children).forEach(child => {
+              if (child !== header) child.style.display = isCollapsed ? 'none' : '';
+            });
+          }
+        });
+      }
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAccordions);
+  } else {
+    initAccordions();
+  }
 })();
 </script>
 </body>

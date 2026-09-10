@@ -648,8 +648,8 @@ input[type=range] {
     left: 0 !important;
     right: 0 !important;
     z-index: 9000 !important;
-    max-height: 58vh !important;
-    height: 58vh !important;
+    max-height: 44vh !important;
+    height: auto !important;
     background: rgba(8, 13, 24, 0.95) !important;
     backdrop-filter: blur(16px) !important;
     -webkit-backdrop-filter: blur(16px) !important;
@@ -711,6 +711,24 @@ input[type=range] {
     padding: 12px 14px 48px !important;
   }
 
+  
+  /* Sleek Compact Drawer Accordion Cards */
+  .mobile-drawer-body .card,
+  .mobile-drawer-body .panel,
+  .mobile-drawer-body .control-card {
+    margin-bottom: 8px !important;
+    border-radius: 10px !important;
+    background: rgba(15, 23, 42, 0.7) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+  .mobile-drawer-body .card-header,
+  .mobile-drawer-body .panel-header {
+    padding: 8px 12px !important;
+    font-size: 0.76rem !important;
+    cursor: pointer !important;
+    user-select: none !important;
+  }
+
   /* Mobile touch controls optimization */
   input[type=range] {
     height: 38px !important;
@@ -743,4 +761,25 @@ input[type=range] {
   .mobile-drawer-body {
     display: contents !important;
   }
+}
+
+
+/* Universal Mobile Drawer Accordions */
+.accordion-arrow {
+  font-size: 13px !important;
+  color: #ffd600 !important;
+  margin-left: auto !important;
+  padding-left: 8px !important;
+  display: inline-block !important;
+  font-weight: 800 !important;
+  transition: transform 0.2s ease !important;
+}
+.mobile-drawer-body .card-header,
+.mobile-drawer-body .card-title,
+.mobile-drawer-body .panel-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  cursor: pointer !important;
+  user-select: none !important;
 }
