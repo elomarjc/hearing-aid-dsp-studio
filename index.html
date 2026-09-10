@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audiological DSP Studio — Binaural Hearing Instrument Simulator</title>
-    <link rel="stylesheet" href="css/style.css?v=4.0">
+    <link rel="stylesheet" href="css/style.css?v=5.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -600,15 +600,16 @@
         }
     })();
     </script>
-<!-- Interactive Guided Spotlight Tour Engine -->
-    <div class="tour-backdrop" id="tourBackdrop"></div>
+
+<!-- Interactive Guided Yellow Spotlight Tour Engine (Zero Blur) -->
     <div class="tour-card" id="tourCard">
         <div class="tour-badge-row">
             <span class="tour-step-badge" id="tourStepBadge">Step 1 of 4</span>
             <button class="tour-btn-skip" id="tourBtnSkip">✕ Skip Tour</button>
         </div>
         <h4 class="tour-action-title" id="tourTitle">Action Title</h4>
-        <div class="tour-why-box" id="tourWhy"><strong>Why:</strong> Reason</div>
+        <div class="tour-happens-box" id="tourHappens"><strong>⚡ What Happens:</strong> Live reaction</div>
+        <div class="tour-why-box" id="tourWhy"><strong>💡 Why:</strong> Reason</div>
         <div class="tour-footer">
             <div class="tour-dots" id="tourDots"></div>
             <div class="tour-controls">
@@ -627,32 +628,36 @@
     {
         "target": "#soundfieldCanvas",
         "title": "\ud83d\udc49 Step 1: Drag Speech (Green) & Noise (Red) Dots",
-        "why": "Solves the 'cocktail party problem' by adjusting spatial angles of speech and noise relative to the binaural head model."
+        "happens": "The polar directivity beam updates and head shadow attenuation recalculates based on acoustic arrival angles.",
+        "why": "Models the 'cocktail party problem' where listeners must extract speech amid background crowd noise."
     },
     {
         "target": "#presetSelect",
         "title": "\ud83d\udc49 Step 2: Select 'Adaptive MVDR' Beamformer",
-        "why": "Adaptive Minimum Variance Distortionless Response steers an acoustic directional null directly toward babble noise while preserving speech."
+        "happens": "The polar beam pattern carves an instant acoustic null (< -25 dB notch) directly toward the noise source while preserving target speech.",
+        "why": "Adaptive Minimum Variance Distortionless Response suppresses interferers without degrading target speech quality."
     },
     {
         "target": "#loopGainSlider",
         "title": "\ud83d\udc49 Step 3: Increase Loop Gain & Toggle AFC",
-        "why": "Acoustic feedback causes painful whistling howling. The Normalized LMS adaptive filter cancels howling in <30 ms with >20 dB feedback cancellation."
+        "happens": "High gain causes piercing whistling howling; engaging AFC uses a 64-tap Normalized LMS adaptive filter to cancel howling in <30 ms.",
+        "why": "Acoustic feedback is the #1 complaint of hearing aid users; adaptive feedback cancellation enables open-fit ear tips."
     },
     {
         "target": "#wdrcCanvas",
-        "title": "\ud83d\udc49 Step 4: Inspect 6-Band WDRC Fitting Curves",
-        "why": "Wide Dynamic Range Compression restores audibility by amplifying soft consonants while compressing loud sounds into the residual hearing span."
+        "title": "\ud83d\udc49 Step 4: Inspect 6-Band WDRC Curves",
+        "happens": "Displays 6 frequency band compression ratios and kneepoint thresholds matching prescribed audiogram hearing loss profiles.",
+        "why": "Wide Dynamic Range Compression restores audibility by amplifying soft consonants while compressing loud sounds."
     }
 ];
         const tourKey = 'tour_done_hearing-aid-dsp-studio';
         let currentStep = 0;
         let highlightedEl = null;
 
-        const backdrop = document.getElementById('tourBackdrop');
         const card = document.getElementById('tourCard');
         const badge = document.getElementById('tourStepBadge');
         const title = document.getElementById('tourTitle');
+        const happens = document.getElementById('tourHappens');
         const why = document.getElementById('tourWhy');
         const dotsContainer = document.getElementById('tourDots');
         const prevBtn = document.getElementById('tourBtnPrev');
@@ -661,7 +666,7 @@
         const launcherBtn = document.getElementById('btnTourLauncher');
         const guideBtn = document.getElementById('guideBtn');
 
-        if (!backdrop || !card) return;
+        if (!card) return;
 
         // Build step dots
         dotsContainer.innerHTML = '';
@@ -675,7 +680,7 @@
             if (window.innerWidth <= 640) {
                 if (targetEl) {
                     const rect = targetEl.getBoundingClientRect();
-                    // If target is in lower half of screen, dock card at top so control is unobstructed!
+                    // If target is in lower half of screen, dock card at top so control is 100% visible!
                     if (rect.top > window.innerHeight * 0.44) {
                         card.style.top = '12px';
                         card.style.bottom = 'auto';
@@ -705,8 +710,8 @@
             let top = rect.bottom + 14;
             let left = rect.left;
 
-            if (top + 210 > window.innerHeight && rect.top > 220) {
-                top = rect.top - 190;
+            if (top + 230 > window.innerHeight && rect.top > 240) {
+                top = rect.top - 210;
             }
             if (left + cardW > window.innerWidth) {
                 left = window.innerWidth - cardW - 20;
@@ -736,7 +741,8 @@
 
             badge.textContent = `Step ${index + 1} of ${steps.length}`;
             title.textContent = step.title;
-            why.innerHTML = `<strong>Why:</strong> ${step.why}`;
+            happens.innerHTML = `<strong>⚡ What Happens:</strong> ${step.happens}`;
+            why.innerHTML = `<strong>💡 Why:</strong> ${step.why}`;
 
             // Update dot indicators
             const dots = dotsContainer.querySelectorAll('.tour-dot');
@@ -750,12 +756,11 @@
                 highlightedEl = targetEl;
                 targetEl.classList.add('tour-spotlight-active');
                 targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-                setTimeout(() => positionCard(targetEl), 150);
+                setTimeout(() => positionCard(targetEl), 120);
             } else {
                 positionCard(null);
             }
 
-            backdrop.classList.add('active');
             card.classList.add('active');
         }
 
@@ -764,7 +769,6 @@
                 highlightedEl.classList.remove('tour-spotlight-active');
                 highlightedEl = null;
             }
-            backdrop.classList.remove('active');
             card.classList.remove('active');
             try {
                 sessionStorage.setItem(tourKey, '1');
@@ -794,8 +798,6 @@
             endTour();
         });
 
-        backdrop.addEventListener('click', endTour);
-
         if (launcherBtn) {
             launcherBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -810,7 +812,7 @@
             });
         }
 
-        // Auto-launch guided spotlight tour on first visit
+        // Auto-launch guided yellow tour on first visit
         window.addEventListener('load', () => {
             setTimeout(() => {
                 try {
