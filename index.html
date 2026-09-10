@@ -57,6 +57,170 @@
 <div class="canvas-container">
 <canvas height="280" id="soundfieldCanvas" width="420"></canvas>
 </div>
+  <!-- Floating Hearing Aid HUD Overlay -->
+  <div class="hud-overlay-layer">
+    <!-- Top-Left HUD Controls -->
+    <div class="hud-top-left">
+      <!-- PRESET Pill -->
+      <div class="hud-pill-box">
+        <div class="hud-pill-inner">
+          <svg class="hud-pill-icon" fill="none" height="13" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="13">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+            <line x1="12" x2="12" y1="19" y2="22"></line>
+          </svg>
+          <div class="hud-text-stack">
+            <span class="hud-mini-label">SCENARIO</span>
+            <span class="hud-val-text" id="hud-preset-label">SPEECH IN NOISE</span>
+          </div>
+          <span class="hud-caret">▾</span>
+          <select class="hud-hidden-select" id="select-active-preset">
+            <option value="speech-noise" selected>SPEECH IN NOISE (CAFETERIA)</option>
+            <option value="omni">QUIET ROOM (OMNI-DIR)</option>
+            <option value="feedback">FEEDBACK HOWL STRESS</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- BEAMFORM Pill -->
+      <div class="hud-pill-box">
+        <div class="hud-pill-inner">
+          <svg class="hud-pill-icon" fill="none" height="13" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="13">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" x2="12" y1="2" y2="12"></line>
+          </svg>
+          <div class="hud-text-stack">
+            <span class="hud-mini-label">BEAMFORMER</span>
+            <span class="hud-val-text" id="hud-beam-label">CARDIOID (DUAL-MIC)</span>
+          </div>
+          <span class="hud-caret">▾</span>
+          <select class="hud-hidden-select" id="select-beamformer">
+            <option value="cardioid" selected>CARDIOID (DUAL-MIC d=12mm)</option>
+            <option value="supercardioid">SUPER-CARDIOID (MAX DI)</option>
+            <option value="omni">OMNIDIRECTIONAL (RAW)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Quick Telemetry Tag Pill -->
+      <div class="hud-tags-row">
+        <div class="hud-tag-wrapper">
+          <button class="hud-tag-pill active" id="btn-quick-afc">
+            <span class="hud-dot-active">●</span>
+            <span id="hud-afc-tag">AFC LMS: CONVERGED (+12dB)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top-Right Floating Actions Cluster (Menu, Settings, Fullscreen) -->
+    <div class="hud-top-right">
+      <button class="hud-circle-btn" id="btn-hud-menu" title="Engineering Whitepaper & Specifications">
+        <svg fill="none" height="16" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" width="16"><line x1="3" x2="21" y1="6" y2="6"></line><line x1="3" x2="21" y1="12" y2="12"></line><line x1="3" x2="21" y1="18" y2="18"></line></svg>
+      </button>
+      <button class="hud-circle-btn" id="btn-hud-settings" title="DSP Controls & Telemetry Drawer">
+        <svg fill="none" height="16" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" width="16"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      </button>
+      <button class="hud-circle-btn" id="btn-hud-fullscreen" title="Toggle Fullscreen">
+        <svg fill="none" height="16" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" width="16"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+      </button>
+    </div>
+
+    <!-- Left Vertical LOOP GAIN HUD Slider -->
+    <div class="hud-vertical-rail hud-left-rail">
+      <div class="hud-rail-top">
+        <svg fill="none" height="14" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+        <span class="hud-rail-title">LOOP GAIN</span>
+      </div>
+      <div class="hud-rail-track-container" id="gain-rail-container">
+        <div class="hud-rail-track">
+          <div class="hud-rail-fill" id="gain-rail-fill" style="height: 55%;"></div>
+          <div class="hud-rail-thumb" id="gain-rail-thumb" style="bottom: 55%;"></div>
+        </div>
+        <input class="hud-rail-range" id="slider-gain-vertical" max="18.0" min="-12.0" step="0.5" type="range" value="4.5"/>
+      </div>
+      <div class="hud-rail-val-pill" id="val-gain-pill">+4.5 dB</div>
+    </div>
+
+    <!-- Right Vertical LMS MU HUD Slider -->
+    <div class="hud-vertical-rail hud-right-rail">
+      <div class="hud-rail-top">
+        <svg fill="none" height="14" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14"><line x1="12" x2="12" y1="19" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+        <span class="hud-rail-title">LMS STEP μ</span>
+      </div>
+      <div class="hud-rail-track-container" id="mu-rail-container">
+        <div class="hud-rail-track">
+          <div class="hud-rail-fill" id="mu-rail-fill" style="height: 45%;"></div>
+          <div class="hud-rail-thumb" id="mu-rail-thumb" style="bottom: 45%;"></div>
+        </div>
+        <input class="hud-rail-range" id="slider-mu-vertical" max="0.1" min="0.005" step="0.005" type="range" value="0.05"/>
+      </div>
+      <div class="hud-rail-val-pill is-live" id="val-mu-pill">0.050μ</div>
+      <button class="hud-rail-pause-btn btn-pause-toggle" id="btn-rail-pause" title="Pause / Resume Simulation">
+        <span id="rail-pause-icon">⏸</span>
+      </button>
+    </div>
+
+    <!-- Bottom Area: Trigger Pill + Centered Transport + Modes Bar -->
+    <div class="hud-bottom-area">
+      <div class="hud-bottom-subrow">
+        <!-- Left Controls Drawer Trigger Pill -->
+        <button class="hud-aocs-trigger-pill" id="btn-trigger-controls-drawer">
+          <span class="aocs-trigger-icon">🦻</span>
+          <div class="aocs-trigger-text">
+            <span class="aocs-trigger-title">DSP RACK</span>
+            <span class="aocs-trigger-sub">WDRC &amp; AFC</span>
+          </div>
+          <span class="aocs-trigger-chevron">›</span>
+        </button>
+
+        <!-- Center Transport Cluster -->
+        <div class="hud-sim-transport">
+          <button class="hud-transport-step" id="btn-transport-step-back" title="Step Back">‹</button>
+          <button class="hud-transport-pause btn-pause-toggle" id="btn-transport-pause">
+            <span id="hud-pause-icon">⏸</span>
+            <span id="hud-pause-label">PAUSE</span>
+          </button>
+          <button class="hud-transport-step" id="btn-transport-step-fwd" title="Step Forward">›</button>
+        </div>
+      </div>
+
+      <!-- Bottom Row: 4 Primary Operational Mode Cards -->
+      <div class="hud-flight-modes-bar">
+        <button class="hud-mode-card active" id="hud-mode-cardioid">
+          <div class="mode-card-header">
+            <span class="mode-card-icon">🎯</span>
+            <span class="mode-card-title">CARDIOID</span>
+          </div>
+          <span class="mode-card-sub">Forward Beam (DI +4.8dB)</span>
+        </button>
+
+        <button class="hud-mode-card" id="hud-mode-omni">
+          <div class="mode-card-header">
+            <span class="mode-card-icon">🌐</span>
+            <span class="mode-card-title">OMNI-DIR</span>
+          </div>
+          <span class="mode-card-sub">360° Ambient Sound</span>
+        </button>
+
+        <button class="hud-mode-card" id="hud-mode-afc">
+          <div class="mode-card-header">
+            <span class="mode-card-icon">🛡️</span>
+            <span class="mode-card-title">AFC ON/OFF</span>
+          </div>
+          <span class="mode-card-sub">LMS Feedback Shield</span>
+        </button>
+
+        <button class="hud-mode-card" id="hud-mode-audition">
+          <div class="mode-card-header">
+            <span class="mode-card-icon">🔊</span>
+            <span class="mode-card-title">AUDITION</span>
+          </div>
+          <span class="mode-card-sub">Live Web Audio Synth</span>
+        </button>
+      </div>
+    </div>
+  </div>
 <div class="control-row">
 <span>Target: Speech (0°, 2.0m)</span>
 <span>Interferer: Babble (110°, 2.3m)</span>
@@ -67,15 +231,16 @@
 <!-- 3. Adaptive Feedback Canceler Card -->
 <!-- 4. 6-Band WDRC & Audiogram Card -->
 <!-- 5. Real-Time Spectral Scope Card (Span 2 columns if available) -->
-<div class="mobile-controls-pane mobile-drawer-pane"><div class="mobile-drawer-header" id="mobileDrawerHeader">
-<div class="drawer-title-group">
-<span style="font-size: 1.1rem;">🎛️</span>
-<span class="drawer-badge">DSP &amp; AUDIO CONTROLS</span>
+<div class="telemetry-backdrop" id="telemetry-backdrop"></div>
+<aside class="telemetry-drawer" id="telemetry-drawer">
+<div class="telemetry-drawer-header">
+  <div class="drawer-header-brand">
+    <span style="font-size: 1.1rem;">🦻</span>
+    <span class="drawer-title">HEARING AID DSP CONTROLS</span>
+  </div>
+  <button class="drawer-close-btn" id="btn-close-telemetry">✕ CLOSE</button>
 </div>
-<div class="drawer-toggle-btn" id="drawerToggleBtn">
-<span id="drawerToggleText">▲ OPEN CONTROLS</span>
-</div>
-</div><div class="mobile-drawer-body" id="mobileDrawerBody"><div class="card">
+<div class="telemetry-drawer-body" id="mobileDrawerBody"><div class="card">
 <div class="card-header">
 <span class="card-title">📡 Dual-Mic Beamformer (d = 12 mm)</span>
 <span style="font-size: 0.75rem; color: #64748b;">Delay-and-Sum</span>
@@ -155,7 +320,8 @@
 <canvas height="170" id="wdrcCanvas" width="420"></canvas>
 </div>
 </div>
-</div><div class="card" style="grid-column: 1 / -1;">
+</aside>
+<div class="card" style="grid-column: 1 / -1;">
 <div class="card-header">
 <span class="card-title">📊 Real-Time Dual Spectrum Analyzer (Pre-DSP vs Post-DSP)</span>
 <span style="font-size: 0.75rem; color: #10b981;">60 FPS FFT Trace</span>
@@ -446,5 +612,22 @@
   }
 })();
 </script>
+<!-- Help & Technical Whitepaper Modal -->
+<div class="modal-overlay" id="help-modal" style="display: none;">
+  <div class="modal-card">
+    <div class="modal-header">
+      <span>Hearing Aid Digital Signal Processing Studio — Engineering Whitepaper</span>
+      <button class="btn-action" id="btn-close-modal" style="padding: 2px 8px;">✕</button>
+    </div>
+    <div class="modal-body">
+      <h4>1. Multi-Microphone Spatial Beamforming</h4>
+      <p>Simulates dual end-fire omnidirectional microphones (inter-element spacing <i>d</i> = 12 mm). Implements fractional delay-and-sum FIR beamforming, steering nulls toward back-hemisphere noise sources (DI = +4.8 dB).</p>
+      <h4>2. Normalized Least Mean Squares (NLMS) Adaptive Feedback Cancellation</h4>
+      <p>Suppresses electro-acoustic feedback whistling (leakage from receiver back to microphone inlet) by synthesizing an adaptive FIR filter <i>W</i>(<i>z</i>) tracking the dynamic feedback path <i>F</i>(<i>z</i>) via Normalized LMS gradient descent, yielding >12 dB Added Stable Gain (ASG).</p>
+      <h4>3. Multi-Channel Wide Dynamic Range Compression (WDRC)</h4>
+      <p>Compresses acoustic speech dynamic range across octave bark bands using syllabic attack/release envelope detection (t<sub>att</sub> = 5 ms, t<sub>rel</sub> = 50 ms), restoring intelligibility for sensorineural hearing loss profiles.</p>
+    </div>
+  </div>
+</div>
 </body>
 </html>

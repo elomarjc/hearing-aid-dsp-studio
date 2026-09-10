@@ -198,3 +198,252 @@ class HearingAidStudioApp {
 window.addEventListener('DOMContentLoaded', () => {
     window.app = new HearingAidStudioApp();
 });
+
+
+// ==========================================
+// MOBILE FLOATING HUD & DRAWER CONTROLLER
+// ==========================================
+(function initMobileFloatingHUD() {
+  const drawer = document.getElementById('telemetryDrawer');
+  const backdrop = document.getElementById('telemetryBackdrop');
+  const btnSettings = document.getElementById('btn-hud-settings');
+  const btnTrigger = document.getElementById('btn-trigger-controls-drawer');
+  const btnClose = document.getElementById('btn-close-telemetry');
+  const btnFullscreen = document.getElementById('btn-hud-fullscreen');
+  const btnMenu = document.getElementById('btn-hud-menu');
+
+  function openDrawer() {
+    if (drawer) drawer.classList.add('open');
+    if (backdrop) backdrop.classList.add('active');
+  }
+
+  function closeDrawer() {
+    if (drawer) drawer.classList.remove('open');
+    if (backdrop) backdrop.classList.remove('active');
+  }
+
+  if (btnSettings) btnSettings.addEventListener('click', openDrawer);
+  if (btnTrigger) btnTrigger.addEventListener('click', openDrawer);
+  if (btnClose) btnClose.addEventListener('click', closeDrawer);
+  if (backdrop) backdrop.addEventListener('click', closeDrawer);
+
+  if (btnMenu) {
+    btnMenu.addEventListener('click', () => {
+      const guideBtn = document.getElementById('guideBtn') || document.getElementById('btnTourLauncher');
+      if (guideBtn) guideBtn.click();
+    });
+  }
+
+  // Cross-platform Universal Fullscreen
+  if (btnFullscreen) {
+    btnFullscreen.addEventListener('click', () => {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen().catch(() => {
+            document.body.classList.toggle('immersive-fullscreen');
+          });
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          document.documentElement.webkitRequestFullscreen();
+        } else {
+          document.body.classList.toggle('immersive-fullscreen');
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+        document.body.classList.remove('immersive-fullscreen');
+      }
+    });
+  }
+
+  // Left Rail: Loop Gain (-10 to 15 dB)
+  const vGain = document.getElementById('slider-gain-vertical');
+  const dGain = document.getElementById('loopGainSlider');
+  const valGain = document.getElementById('hud-gain-val');
+  const fillGain = document.getElementById('rail-fill-gain');
+
+  function updateGainHUD(val) {
+    const num = parseFloat(val);
+    if (valGain) valGain.textContent = num.toFixed(1) + ' dB';
+    if (fillGain) {
+      // Range is -10 to 15 (span = 25)
+      const pct = Math.max(0, Math.min(100, ((num - (-10)) / 25) * 100));
+      fillGain.style.height = pct + '%';
+    }
+    if (vGain && Math.abs(parseFloat(vGain.value) - num) > 0.05) {
+      vGain.value = num;
+    }
+  }
+
+  if (vGain && dGain) {
+    vGain.min = dGain.min || '-10';
+    vGain.max = dGain.max || '15';
+    vGain.step = dGain.step || '0.5';
+    vGain.value = dGain.value;
+    updateGainHUD(dGain.value);
+
+    vGain.addEventListener('input', (e) => {
+      dGain.value = e.target.value;
+      dGain.dispatchEvent(new Event('input', { bubbles: true }));
+      updateGainHUD(e.target.value);
+    });
+
+    dGain.addEventListener('input', (e) => {
+      updateGainHUD(e.target.value);
+    });
+  }
+
+  // Right Rail: LMS Adaptation Step Size Mu (0.005 to 0.2)
+  const vMu = document.getElementById('slider-mu-vertical');
+  const dMu = document.getElementById('muSlider');
+  const valMu = document.getElementById('hud-mu-val');
+  const fillMu = document.getElementById('rail-fill-mu');
+
+  function updateMuHUD(val) {
+    const num = parseFloat(val);
+    if (valMu) valMu.textContent = num.toFixed(3);
+    if (fillMu) {
+      // Range is 0.005 to 0.2 (span = 0.195)
+      const pct = Math.max(0, Math.min(100, ((num - 0.005) / 0.195) * 100));
+      fillMu.style.height = pct + '%';
+    }
+    if (vMu && Math.abs(parseFloat(vMu.value) - num) > 0.001) {
+      vMu.value = num;
+    }
+  }
+
+  if (vMu && dMu) {
+    vMu.min = dMu.min || '0.005';
+    vMu.max = dMu.max || '0.2';
+    vMu.step = dMu.step || '0.005';
+    vMu.value = dMu.value;
+    updateMuHUD(dMu.value);
+
+    vMu.addEventListener('input', (e) => {
+      dMu.value = e.target.value;
+      dMu.dispatchEvent(new Event('input', { bubbles: true }));
+      updateMuHUD(e.target.value);
+    });
+
+    dMu.addEventListener('input', (e) => {
+      updateMuHUD(e.target.value);
+    });
+  }
+
+  // Top-left Presets sync
+  const pillPreset = document.getElementById('select-active-preset');
+  const deskPreset = document.getElementById('presetSelect');
+  if (pillPreset && deskPreset) {
+    pillPreset.value = deskPreset.value;
+    pillPreset.addEventListener('change', (e) => {
+      deskPreset.value = e.target.value;
+      deskPreset.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    deskPreset.addEventListener('change', (e) => {
+      pillPreset.value = e.target.value;
+    });
+  }
+
+  // Transport and Play/Pause
+  let isSimPaused = false;
+  const railPauseBtn = document.getElementById('btn-rail-pause');
+  const transPauseBtn = document.getElementById('btn-transport-pause');
+  const pauseIcon1 = document.getElementById('rail-pause-icon');
+  const pauseIcon2 = document.getElementById('hud-pause-icon');
+  const pauseText = document.getElementById('hud-pause-text');
+
+  function toggleSimPause() {
+    isSimPaused = !isSimPaused;
+    const symbol = isSimPaused ? '▶' : '⏸';
+    const text = isSimPaused ? 'RESUME' : 'PAUSE';
+    if (pauseIcon1) pauseIcon1.textContent = symbol;
+    if (pauseIcon2) pauseIcon2.textContent = symbol;
+    if (pauseText) pauseText.textContent = text;
+    if (transPauseBtn) transPauseBtn.classList.toggle('active', isSimPaused);
+  }
+
+  if (railPauseBtn) railPauseBtn.addEventListener('click', toggleSimPause);
+  if (transPauseBtn) transPauseBtn.addEventListener('click', toggleSimPause);
+
+  const stepBack = document.getElementById('btn-transport-step-back');
+  const stepFwd = document.getElementById('btn-transport-step-fwd');
+  if (stepBack && dGain) {
+    stepBack.addEventListener('click', () => {
+      let v = Math.max(-10, parseFloat(dGain.value) - 1.0);
+      dGain.value = v;
+      dGain.dispatchEvent(new Event('input', { bubbles: true }));
+      updateGainHUD(v);
+    });
+  }
+  if (stepFwd && dGain) {
+    stepFwd.addEventListener('click', () => {
+      let v = Math.min(15, parseFloat(dGain.value) + 1.0);
+      dGain.value = v;
+      dGain.dispatchEvent(new Event('input', { bubbles: true }));
+      updateGainHUD(v);
+    });
+  }
+
+  // Mode Cards
+  const modeCardioid = document.getElementById('hud-mode-cardioid');
+  const modeOmni = document.getElementById('hud-mode-omni');
+  const modeAfc = document.getElementById('hud-mode-afc');
+  const modeAudition = document.getElementById('hud-mode-audition');
+  const afcToggle = document.getElementById('afcToggle');
+  const liveAudioBtn = document.getElementById('liveAudioBtn');
+
+  function updateAfcCardState() {
+    if (afcToggle && modeAfc) {
+      modeAfc.classList.toggle('active', afcToggle.checked);
+    }
+  }
+  updateAfcCardState();
+
+  if (afcToggle) {
+    afcToggle.addEventListener('change', updateAfcCardState);
+  }
+
+  if (modeCardioid) {
+    modeCardioid.addEventListener('click', () => {
+      if (deskPreset) {
+        deskPreset.value = 'steep_high_frequency';
+        deskPreset.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      modeCardioid.classList.add('active');
+      if (modeOmni) modeOmni.classList.remove('active');
+    });
+  }
+
+  if (modeOmni) {
+    modeOmni.addEventListener('click', () => {
+      if (deskPreset) {
+        deskPreset.value = 'normal';
+        deskPreset.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      modeOmni.classList.add('active');
+      if (modeCardioid) modeCardioid.classList.remove('active');
+    });
+  }
+
+  if (modeAfc) {
+    modeAfc.addEventListener('click', () => {
+      if (afcToggle) {
+        afcToggle.checked = !afcToggle.checked;
+        afcToggle.dispatchEvent(new Event('change', { bubbles: true }));
+        updateAfcCardState();
+      }
+    });
+  }
+
+  if (modeAudition) {
+    modeAudition.addEventListener('click', () => {
+      if (liveAudioBtn) {
+        liveAudioBtn.click();
+        const isActive = liveAudioBtn.classList.contains('active');
+        modeAudition.classList.toggle('active', isActive);
+      }
+    });
+  }
+})();
