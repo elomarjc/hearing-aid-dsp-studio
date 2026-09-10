@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Audiological DSP Studio — Binaural Hearing Instrument Simulator</title>
-<link href="css/style.css?v=11.0" rel="stylesheet"/>
+<link href="css/style.css?v=12.0" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet"/>
@@ -67,7 +67,15 @@
 <!-- 3. Adaptive Feedback Canceler Card -->
 <!-- 4. 6-Band WDRC & Audiogram Card -->
 <!-- 5. Real-Time Spectral Scope Card (Span 2 columns if available) -->
-<div class="mobile-controls-pane"><div class="card">
+<div class="mobile-controls-pane mobile-drawer-pane"><div class="mobile-drawer-header" id="mobileDrawerHeader">
+<div class="drawer-title-group">
+<span style="font-size: 1.1rem;">🎛️</span>
+<span class="drawer-badge">DSP &amp; AUDIO CONTROLS</span>
+</div>
+<div class="drawer-toggle-btn" id="drawerToggleBtn">
+<span id="drawerToggleText">▲ OPEN CONTROLS</span>
+</div>
+</div><div class="mobile-drawer-body" id="mobileDrawerBody"><div class="card">
 <div class="card-header">
 <span class="card-title">📡 Dual-Mic Beamformer (d = 12 mm)</span>
 <span style="font-size: 0.75rem; color: #64748b;">Delay-and-Sum</span>
@@ -161,7 +169,7 @@
 <span style="color: #38bdf8; font-size: 0.78rem;">Sampling Rate: 44.1 kHz | Processing Delay: &lt; 3.5 ms</span>
 </div>
 </div>
-</div></div></main>
+</div></div></div></main>
 <!-- Footer -->
 <footer style="text-align: center; padding: 20px; font-size: 0.8rem; color: #64748b; border-top: 1px solid #1e293b; margin-top: 20px;">
         Designed &amp; Implemented by <strong>Jacob El-Omar</strong> | Aalborg University — Bachelor's Project in Electronic Engineering<br/>
@@ -175,167 +183,172 @@
 <!-- Floating Tour Launcher Pill -->
 <!-- Interactive Guided Tour Engine -->
 <!-- Interactive Guided Tour Engine -->
+<!-- Interactive Guided Tour Engine -->
 
 
 <!-- Interactive Guided Tour Engine -->
 
 
-<div class="tour-bar" id="tourBar">
-<div class="tour-bar-main">
-<div class="tour-bar-info">
-<div class="tour-bar-badge-row">
+<div class="tour-card" id="tourCard">
+<div class="tour-card-header">
+<div class="tour-badge-row">
 <span class="tour-step-badge" id="tourStepBadge">Step 1 of 4</span>
-<button class="tour-btn-info" id="tourInfoToggle" title="Explain why" type="button">💡 Info</button>
+<span class="tour-app-name">Audiology DSP</span>
 </div>
-<div class="tour-bar-title" id="tourTitle">👉 Interactive Tour</div>
+<button class="tour-btn-close" id="tourBtnSkip" type="button">✕ Close Tour</button>
 </div>
-<div class="tour-bar-actions">
-<button class="tour-btn-do" id="tourBtnDo" title="Auto-trigger this action" type="button">⚡ Do Step</button>
-<button class="tour-btn-next" id="tourBtnNext" type="button">Next ➔</button>
-<button class="tour-btn-close" id="tourBtnSkip" title="Close tour" type="button">✕</button>
+<div class="tour-card-body">
+<div class="tour-instruction-title" id="tourTitle">👉 Interactive Guide</div>
+<div class="tour-detail-row tour-detail-happens" id="tourHappens"></div>
+<div class="tour-detail-row tour-detail-why" id="tourWhy"></div>
+</div>
+<div class="tour-card-footer">
+<button class="tour-btn-prev" id="tourBtnPrev" type="button">‹ Prev</button>
+<button class="tour-btn-next" id="tourBtnNext" type="button">Next Step ➔</button>
 </div>
 </div>
-<div class="tour-details-drawer" id="tourDetailsDrawer">
-<div class="tour-happens-box" id="tourHappens"></div>
-<div class="tour-why-box" id="tourWhy"></div>
-</div>
-</div>
-
 <button class="btn-tour-launcher" id="btnTourLauncher" title="Start Step-by-Step Interactive Guide">
-<span style="font-size: 1.1rem;">⚡</span>
+<span style="font-size: 1rem;">⚡</span>
 <span>How to Use</span>
 </button>
 
-<!-- Interactive Guided Tour Engine -->
 <script>
-    (function() {
-        const steps = [
-            {
-                target: "#soundfieldCanvas",
-                title: "👉 Step 1: Move Acoustic Soundfield Sources",
-                happens: "Polar beamformer steers directional lobe toward speech and places notch at noise.",
-                why: "Overcomes cocktail party problem by maximizing Signal-to-Noise Ratio (SNR).",
-                action: (el) => { if (window.audioEngine) { window.audioEngine.targetX = 0.3; window.audioEngine.targetY = 0.4; if (window.audioEngine.computeAcoustics) window.audioEngine.computeAcoustics(); } }
-            },
-            {
-                target: "#afcToggle",
-                title: "👉 Step 2: Enable Adaptive Feedback Canceler",
-                happens: "NLMS adaptive filter tracks acoustic leakage path and eliminates high-pitch howl.",
-                why: "Allows high hearing gain without triggering unstable acoustic squealing.",
-                action: (el) => { el.checked = !el.checked; el.dispatchEvent(new Event('change')); }
-            },
-            {
-                target: "#presetSelect",
-                title: "👉 Step 3: Select 'Steep High-Frequency Loss'",
-                happens: "6-band WDRC compressor boosts high frequencies with custom compression ratios.",
-                why: "Compensates for sensorineural cochlear hair cell loss in typical presbycusis.",
-                action: (el) => { el.value = 'steep_high_frequency'; el.dispatchEvent(new Event('change')); }
-            },
-            {
-                target: "#liveAudioBtn",
-                title: "👉 Step 4: Toggle Live Audio Simulation",
-                happens: "Web Audio API synthesizes filtered speech audio directly through headphones.",
-                why: "Allows instant audiological evaluation of DSP algorithms in real-time.",
-                action: (el) => { el.click(); }
+(function() {
+    const steps = [
+        {
+            target: '#soundfieldCanvas',
+            title: '👉 Step 1: Move Acoustic Soundfield Sources',
+            happens: 'Polar beamformer steers directional lobe toward speech and places notch at noise.',
+            why: 'Overcomes cocktail party problem by maximizing Signal-to-Noise Ratio (SNR).'
+        },
+        {
+            target: '#afcToggle',
+            title: '👉 Step 2: Enable Adaptive Feedback Canceler',
+            happens: 'NLMS adaptive filter tracks acoustic leakage path and eliminates high-pitch howl.',
+            why: 'Allows high hearing gain without triggering unstable acoustic squealing.'
+        },
+        {
+            target: '#presetSelect',
+            title: "👉 Step 3: Select 'Steep High-Frequency Loss'",
+            happens: '6-band WDRC compressor boosts high frequencies with custom compression ratios.',
+            why: 'Compensates for sensorineural cochlear hair cell loss in typical presbycusis.'
+        },
+        {
+            target: '#liveAudioBtn',
+            title: '👉 Step 4: Toggle Live Audio Simulation',
+            happens: 'Web Audio API synthesizes filtered speech audio directly through headphones.',
+            why: 'Allows instant audiological evaluation of DSP algorithms in real-time.'
+        }
+    ];
+
+    const tourKey = 'tour_done_hearing-aid-dsp-studio';
+    let currentStep = 0;
+    let highlightedEl = null;
+
+    const card = document.getElementById('tourCard');
+    const badge = document.getElementById('tourStepBadge');
+    const title = document.getElementById('tourTitle');
+    const happens = document.getElementById('tourHappens');
+    const why = document.getElementById('tourWhy');
+    const prevBtn = document.getElementById('tourBtnPrev');
+    const nextBtn = document.getElementById('tourBtnNext');
+    const skipBtn = document.getElementById('tourBtnSkip');
+    const launcherBtn = document.getElementById('btnTourLauncher');
+    const guideBtn = document.getElementById('guideBtn');
+
+    // Drawer elements
+    const drawer = document.querySelector('.mobile-drawer-pane');
+    const drawerHeader = document.getElementById('mobileDrawerHeader');
+    const drawerToggleText = document.getElementById('drawerToggleText');
+
+    function setDrawerExpanded(expand) {
+        if (!drawer) return;
+        if (expand) {
+            drawer.classList.add('drawer-expanded');
+            if (drawerToggleText) drawerToggleText.textContent = '▼ MINIMIZE CONTROLS';
+        } else {
+            drawer.classList.remove('drawer-expanded');
+            if (drawerToggleText) drawerToggleText.textContent = '▲ OPEN CONTROLS';
+        }
+    }
+
+    if (drawerHeader) {
+        drawerHeader.addEventListener('click', () => {
+            const isExpanded = drawer.classList.contains('drawer-expanded');
+            setDrawerExpanded(!isExpanded);
+        });
+    }
+
+    function showStep(index) {
+        if (index < 0 || index >= steps.length) return;
+        currentStep = index;
+
+        if (highlightedEl) {
+            highlightedEl.classList.remove('tour-spotlight-active');
+        }
+
+        const step = steps[index];
+        let targetEl = null;
+        try {
+            targetEl = document.querySelector(step.target);
+        } catch(e) {}
+
+        badge.textContent = `Step ${index + 1} of ${steps.length}`;
+        title.textContent = step.title;
+        happens.innerHTML = `<strong>⚡ What Happens:</strong> ${step.happens}`;
+        why.innerHTML = `<strong>💡 Why:</strong> ${step.why}`;
+
+        if (prevBtn) {
+            prevBtn.style.visibility = index === 0 ? 'hidden' : 'visible';
+        }
+        if (nextBtn) {
+            nextBtn.textContent = index === steps.length - 1 ? 'Finish Tour 🚀' : 'Next Step ➔';
+        }
+
+        if (targetEl) {
+            highlightedEl = targetEl;
+            targetEl.classList.add('tour-spotlight-active');
+
+            // If target is inside drawer, auto-expand drawer on mobile
+            if (drawer && drawer.contains(targetEl)) {
+                setDrawerExpanded(true);
             }
-        ];
-        const tourKey = 'tour_done_hearing-aid-dsp-studio';
-        let currentStep = 0;
-        let highlightedEl = null;
 
-        const bar = document.getElementById('tourBar');
-        const badge = document.getElementById('tourStepBadge');
-        const title = document.getElementById('tourTitle');
-        const happens = document.getElementById('tourHappens');
-        const why = document.getElementById('tourWhy');
-        const infoBtn = document.getElementById('tourInfoToggle');
-        const drawer = document.getElementById('tourDetailsDrawer');
-        const doBtn = document.getElementById('tourBtnDo');
-        const nextBtn = document.getElementById('tourBtnNext');
-        const skipBtn = document.getElementById('tourBtnSkip');
-        const launcherBtn = document.getElementById('btnTourLauncher');
-        const guideBtn = document.getElementById('guideBtn');
-
-        if (!bar) return;
-
-        if (infoBtn && drawer) {
-            infoBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                drawer.classList.toggle('open');
-            });
+            setTimeout(() => {
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 80);
         }
 
-        function showStep(index) {
-            if (index < 0 || index >= steps.length) return;
-            currentStep = index;
+        if (launcherBtn) launcherBtn.style.display = 'none';
+        card.classList.add('active');
+    }
 
-            if (highlightedEl) {
-                highlightedEl.classList.remove('tour-spotlight-active');
-            }
-
-            const step = steps[index];
-            let targetEl = null;
-            try {
-                targetEl = document.querySelector(step.target);
-            } catch(e) {}
-
-            badge.textContent = `Step ${index + 1} of ${steps.length}`;
-            title.textContent = step.title;
-            happens.innerHTML = `<strong>⚡ What Happens:</strong> ${step.happens}`;
-            why.innerHTML = `<strong>💡 Why:</strong> ${step.why}`;
-
-            nextBtn.textContent = index === steps.length - 1 ? 'Finish 🚀' : 'Next ➔';
-
-            if (targetEl) {
-                highlightedEl = targetEl;
-                targetEl.classList.add('tour-spotlight-active');
-                setTimeout(() => {
-                    targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 50);
-            }
-
-            if (launcherBtn) launcherBtn.style.display = 'none';
-            bar.classList.add('active');
+    function endTour() {
+        if (highlightedEl) {
+            highlightedEl.classList.remove('tour-spotlight-active');
+            highlightedEl = null;
         }
+        card.classList.remove('active');
+        if (launcherBtn) launcherBtn.style.display = 'flex';
+        // Minimize drawer so canvas is hero focus!
+        setDrawerExpanded(false);
+        try {
+            sessionStorage.setItem(tourKey, '1');
+        } catch(e) {}
+    }
 
-        function endTour() {
-            if (highlightedEl) {
-                highlightedEl.classList.remove('tour-spotlight-active');
-                highlightedEl = null;
-            }
-            bar.classList.remove('active');
-            if (launcherBtn) launcherBtn.style.display = 'flex';
-            try {
-                sessionStorage.setItem(tourKey, '1');
-            } catch(e) {}
-        }
+    function startTour() {
+        showStep(0);
+    }
 
-        function startTour() {
-            showStep(0);
-        }
+    if (prevBtn) {
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (currentStep > 0) showStep(currentStep - 1);
+        });
+    }
 
-        if (doBtn) {
-            doBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const step = steps[currentStep];
-                let targetEl = null;
-                try {
-                    targetEl = document.querySelector(step.target);
-                } catch(err) {}
-
-                if (step && typeof step.action === 'function') {
-                    step.action(targetEl);
-                } else if (targetEl) {
-                    targetEl.click();
-                }
-
-                doBtn.textContent = '✓ Done!';
-                setTimeout(() => {
-                    doBtn.textContent = '⚡ Do Step';
-                }, 1200);
-            });
-        }
-
+    if (nextBtn) {
         nextBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             if (currentStep < steps.length - 1) {
@@ -344,45 +357,45 @@
                 endTour();
             }
         });
+    }
 
+    if (skipBtn) {
         skipBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             endTour();
         });
+    }
 
-        if (launcherBtn) {
-            launcherBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                startTour();
-            });
-        }
-
-        if (guideBtn) {
-            guideBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                startTour();
-            });
-        }
-
-        // Auto-launch guided tour on first visit
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                try {
-                    const completed = sessionStorage.getItem(tourKey);
-                    if (!completed) {
-                        startTour();
-                    }
-                } catch(e) {
-                    startTour();
-                }
-            }, 500);
+    if (launcherBtn) {
+        launcherBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            startTour();
         });
+    }
 
-        // URL parameter override: ?tour=1
-        if (window.location.search.indexOf('tour') !== -1) {
-            setTimeout(startTour, 350);
-        }
-    })();
-    </script>
+    if (guideBtn) {
+        guideBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            startTour();
+        });
+    }
+
+    // Auto-launch tour on first visit
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            try {
+                const done = sessionStorage.getItem(tourKey);
+                if (!done) startTour();
+            } catch(e) {
+                startTour();
+            }
+        }, 500);
+    });
+
+    if (window.location.search.indexOf('tour') !== -1) {
+        setTimeout(startTour, 350);
+    }
+})();
+</script>
 </body>
 </html>
