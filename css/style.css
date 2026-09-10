@@ -1632,3 +1632,23 @@ body.immersive-fullscreen .live-sticky-screen {
     border: none !important;
   }
 }
+
+/* Clean Mobile HUD: Strictly hide desktop tour cards, launcher buttons, modal footers & headers */
+@media (max-width: 900px) {
+  .guide-modal-footer,
+  .btn-guide-start,
+  #tourCard,
+  .tour-card,
+  .tour-overlay,
+  #btnTourLauncher,
+  .btnTourLauncher,
+  .tour-launcher-btn,
+  .app-header,
+  header.app-header,
+  section.status-bar,
+  footer {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
